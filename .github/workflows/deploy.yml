@@ -31,6 +31,9 @@ jobs:
       - name: Create 404.html
         run: cp release/wwwroot/index.html release/wwwroot/404.html
 
+      - name: Create .nojekyll
+        run: touch release/wwwroot/.nojekyll
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
