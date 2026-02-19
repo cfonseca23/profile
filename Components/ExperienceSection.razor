@@ -18,6 +18,10 @@
                             </div>
                             <span class="badge bg-secondary">@exp.Period</span>
                         </div>
+                        @if (!string.IsNullOrEmpty(exp.Description))
+                        {
+                            <p class="text-muted mt-2 mb-2">@exp.Description</p>
+                        }
                         @if (exp.Technologies.Count > 0)
                         {
                             <div class="d-flex flex-wrap gap-1 mt-2">

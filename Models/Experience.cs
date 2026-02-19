@@ -7,6 +7,7 @@ public class Experience
     public string Company { get; set; } = string.Empty;
     public string Role { get; set; } = string.Empty;
     public string Industry { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
     public List<string> Technologies { get; set; } = [];
 
     public string Period => EndYear.HasValue
