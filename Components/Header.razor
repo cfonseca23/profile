@@ -1,0 +1,17 @@
+@using Profile.Models
+
+<header class="cv-header">
+    <h1>@Personal.Name</h1>
+    <p class="title">@Personal.Title</p>
+    <p class="location">@Personal.Location</p>
+    <div class="contact-links">
+        <a href="mailto:@Personal.Email">@Personal.Email</a>
+        <a href="https://linkedin.com/in/@Personal.LinkedIn" target="_blank">LinkedIn</a>
+        <a href="https://github.com/@Personal.GitHub" target="_blank">GitHub</a>
+    </div>
+</header>
+
+@code {
+    [Parameter]
+    public PersonalInfo Personal { get; set; } = new();
+}

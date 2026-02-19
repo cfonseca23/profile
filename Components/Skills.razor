@@ -1,0 +1,24 @@
+@using Profile.Models
+
+<section class="cv-skills">
+    <h2>Habilidades</h2>
+    <div class="skills-grid">
+        @foreach (var skill in Items)
+        {
+            <div class="skill-category">
+                <h3>@skill.Category</h3>
+                <div class="skill-items">
+                    @foreach (var item in skill.Items)
+                    {
+                        <span class="skill-badge">@item</span>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+@code {
+    [Parameter]
+    public List<Skill> Items { get; set; } = [];
+}

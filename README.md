@@ -1,6 +1,17 @@
 # Profile
 
-Blazor WebAssembly profile page.
+CV/Portfolio personal usando Blazor WebAssembly.
+
+## Objetivo
+
+Página web de currículum con datos dinámicos cargados desde JSON. Los años de experiencia se calculan automáticamente.
+
+## Arquitectura
+
+- **Models/** - Entidades C# (CvData, Experience, Education, Skill)
+- **Services/** - CvService para cargar datos
+- **Components/** - Componentes Razor reutilizables
+- **wwwroot/data/cv.json** - Datos del CV editables sin recompilar
 
 ## Development
 

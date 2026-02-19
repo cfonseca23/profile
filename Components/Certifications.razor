@@ -1,0 +1,14 @@
+<section class="cv-certifications">
+    <h2>Certificaciones</h2>
+    <ul>
+        @foreach (var cert in Items)
+        {
+            <li>@cert</li>
+        }
+    </ul>
+</section>
+
+@code {
+    [Parameter]
+    public List<string> Items { get; set; } = [];
+}

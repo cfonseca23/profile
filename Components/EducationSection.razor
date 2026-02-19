@@ -1,0 +1,22 @@
+@using Profile.Models
+
+<section class="cv-education">
+    <h2>Educación</h2>
+    <div class="education-list">
+        @foreach (var edu in Items)
+        {
+            <div class="education-item">
+                <div class="education-period">@edu.Period</div>
+                <div class="education-content">
+                    <h3>@edu.Degree</h3>
+                    <p>@edu.Institution</p>
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+@code {
+    [Parameter]
+    public List<Education> Items { get; set; } = [];
+}

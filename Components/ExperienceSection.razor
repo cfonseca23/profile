@@ -1,0 +1,32 @@
+@using Profile.Models
+
+<section class="cv-experience">
+    <h2>Experiencia</h2>
+    <div class="timeline">
+        @foreach (var exp in Experiences)
+        {
+            <div class="timeline-item">
+                <div class="timeline-period">@exp.Period</div>
+                <div class="timeline-content">
+                    <h3>@exp.Role</h3>
+                    <p class="company">@exp.Company</p>
+                    <p class="industry">@exp.Industry</p>
+                    @if (exp.Technologies.Count > 0)
+                    {
+                        <div class="tech-tags">
+                            @foreach (var tech in exp.Technologies)
+                            {
+                                <span class="tech-tag">@tech</span>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+@code {
+    [Parameter]
+    public List<Experience> Experiences { get; set; } = [];
+}
