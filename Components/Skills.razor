@@ -1,17 +1,23 @@
 @using Profile.Models
 
-<section class="cv-skills">
-    <h2>Habilidades</h2>
-    <div class="skills-grid">
+<section class="container mb-5">
+    <h2 class="h4 mb-4 text-dark">
+        🛠️ Habilidades
+    </h2>
+    <div class="row g-3">
         @foreach (var skill in Items)
         {
-            <div class="skill-category">
-                <h3>@skill.Category</h3>
-                <div class="skill-items">
-                    @foreach (var item in skill.Items)
-                    {
-                        <span class="skill-badge">@item</span>
-                    }
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h3 class="card-title h6 text-secondary fw-bold mb-3">@skill.Category</h3>
+                        <div class="d-flex flex-wrap gap-2">
+                            @foreach (var item in skill.Items)
+                            {
+                                <span class="badge bg-dark bg-opacity-75">@item</span>
+                            }
+                        </div>
+                    </div>
                 </div>
             </div>
         }

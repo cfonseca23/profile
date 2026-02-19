@@ -1,15 +1,23 @@
 @using Profile.Models
 
-<section class="cv-education">
-    <h2>Educación</h2>
-    <div class="education-list">
+<section class="container mb-5">
+    <h2 class="h4 mb-4 text-dark">
+        🎓 Educación
+    </h2>
+    <div class="row g-3">
         @foreach (var edu in Items)
         {
-            <div class="education-item">
-                <div class="education-period">@edu.Period</div>
-                <div class="education-content">
-                    <h3>@edu.Degree</h3>
-                    <p>@edu.Institution</p>
+            <div class="col-md-6">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h3 class="h6 mb-1">@edu.Degree</h3>
+                                <p class="text-muted mb-0">@edu.Institution</p>
+                            </div>
+                            <span class="badge bg-secondary">@edu.Period</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         }

@@ -1,17 +1,40 @@
 @using Profile.Models
 
-<header class="cv-header">
-    <h1>@Personal.Name</h1>
-    <p class="title">@Personal.Title</p>
-    <p class="location">@Personal.Location</p>
-    <div class="contact-links">
-        <a href="mailto:@Personal.Email">@Personal.Email</a>
-        <a href="https://linkedin.com/in/@Personal.LinkedIn" target="_blank">LinkedIn</a>
-        <a href="https://github.com/@Personal.GitHub" target="_blank">GitHub</a>
+<header class="bg-dark text-white py-5 mb-4">
+    <div class="container text-center">
+        @if (!string.IsNullOrEmpty(PhotoUrl))
+        {
+            <img src="@PhotoUrl" alt="@Personal.Name" class="rounded-circle mb-3 border border-3 border-light" width="150" height="150" />
+        }
+        <h1 class="display-4 fw-bold">@Personal.Name</h1>
+        <p class="lead mb-3 text-light opacity-75">@Personal.Title</p>
+        <p class="text-secondary mb-4">
+            📍 @Personal.Location
+        </p>
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+            <a href="https://linkedin.com/in/@Personal.LinkedIn" target="_blank" class="btn btn-outline-light">
+                <i class="bi bi-linkedin"></i> LinkedIn
+            </a>
+            <a href="https://github.com/@Personal.GitHub" target="_blank" class="btn btn-outline-light">
+                <i class="bi bi-github"></i> GitHub
+            </a>
+            @if (!string.IsNullOrEmpty(CvUrl))
+            {
+                <a href="@CvUrl" target="_blank" class="btn btn-outline-light">
+                    <i class="bi bi-file-earmark-pdf"></i> Ver CV
+                </a>
+            }
+        </div>
     </div>
 </header>
 
 @code {
     [Parameter]
     public PersonalInfo Personal { get; set; } = new();
+    
+    [Parameter]
+    public string? PhotoUrl { get; set; }
+    
+    [Parameter]
+    public string? CvUrl { get; set; }
 }

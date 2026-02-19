@@ -1,11 +1,18 @@
-<section class="cv-certifications">
-    <h2>Certificaciones</h2>
-    <ul>
+<section class="container mb-5">
+    <h2 class="h4 mb-4 text-dark">
+        🏆 Certificaciones
+    </h2>
+    <div class="row g-2">
         @foreach (var cert in Items)
         {
-            <li>@cert</li>
+            <div class="col-md-6">
+                <div class="d-flex align-items-center p-3 bg-light rounded">
+                    <span class="text-secondary me-2">✔️</span>
+                    <span>@cert</span>
+                </div>
+            </div>
         }
-    </ul>
+    </div>
 </section>
 
 @code {

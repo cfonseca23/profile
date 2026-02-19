@@ -3,39 +3,44 @@
     "name": "Cristhian Fonseca",
     "title": "Software Engineer | .NET IBM ACE12 - IBM BUS | Agent Framework - Semantic Kernel",
     "location": "Bogotá, Colombia",
-    "email": "cris.2305@hotmail.com",
     "linkedIn": "cristhianjfonseca",
     "gitHub": "cfonseca23"
   },
-  "summary": "Ingeniero con más de {years} años de experiencia en desarrollo de web apps, web services, API REST y aplicaciones de escritorio. Experiencia en empresas financieras, aseguradoras, comisionistas de bolsa de valores, sistemas ERP y WMS para clientes en América Latina.",
+  "photoUrl": "images/profile.jpg",
+  "cvUrl": "docs/Profile.pdf",
+"summary": "Ingeniero con más de {years} años de experiencia en el desarrollo de web apps, web services, API REST y aplicaciones de escritorio.\n\nMi trayectoria profesional abarca una amplia variedad de proyectos tecnológicos en diversas industrias y contextos incluyendo empresas financieras, aseguradoras, comisionistas de bolsa de valores, así como desarrollos en sistemas ERP y WMS para clientes en América Latina.\n\nMi experiencia tecnológica se extiende a través de un conjunto diverso de herramientas y plataformas, incluyendo C#, .NET Framework 3.5 a 4.8, .NET Core 5 a .NET 8, Blazor, JavaScript, Entity Framework Core, RabbitMQ, servicios web SOAP y API REST.\n\nEn bases de datos, he trabajado con SQL Server, Oracle Database y PostgreSQL, diseñando soluciones sólidas y escalables.",
   "skills": [
     {
       "category": "Backend",
-      "items": ["C#", ".NET Framework 3.5-4.8", ".NET Core 5-8", "Entity Framework Core"]
+      "items": ["C#", ".NET Framework 3.5-4.8", ".NET 5-8", "Entity Framework Core", "LINQ"]
     },
     {
       "category": "Frontend",
-      "items": ["Blazor", "JavaScript", "Razor"]
+      "items": ["Blazor", "JavaScript", "Razor", "JQuery"]
     },
     {
       "category": "Mensajería",
       "items": ["RabbitMQ"]
     },
     {
-      "category": "APIs",
-      "items": ["SOAP", "REST"]
+      "category": "Web Services",
+      "items": ["API REST", "SOAP", "ASP.NET MVC", "Web API"]
     },
     {
       "category": "Bases de datos",
-      "items": ["SQL Server", "Oracle", "PostgreSQL"]
+      "items": ["SQL Server", "Oracle Database", "PostgreSQL"]
     },
     {
       "category": "Control de versiones",
-      "items": ["Azure DevOps (TFVC & Git)", "GitHub", "SVN"]
+      "items": ["Azure DevOps", "TFVC", "Git", "GitHub", "SVN Tortoise"]
     },
     {
       "category": "Integración",
       "items": ["IBM BUS", "IBM ACE12"]
+    },
+    {
+      "category": "Otros",
+      "items": ["WPF", "Bootstrap", "Semantic Kernel"]
     }
   ],
   "experiences": [
@@ -44,39 +49,39 @@
       "endYear": null,
       "company": "Davivienda Corredores",
       "role": "Ingeniero de desarrollo / Líder técnico",
-      "industry": "Comisionista de bolsa",
-      "technologies": [".NET", "IBM BUS", "IBM ACE12"]
+      "industry": "Comisionista de bolsa de valores",
+      "technologies": [".NET", "IBM BUS", "IBM ACE12", "SQL Server"]
     },
     {
       "startYear": 2020,
       "endYear": 2021,
       "company": "ITBF Consulting",
       "role": "Ingeniero de desarrollo",
-      "industry": "Financiero",
-      "technologies": ["ASP.NET MVC", "C#", "Razor", "JQuery", "JavaScript", "SQL", "TFS"]
+      "industry": "Financiero - Software interno de negocio",
+      "technologies": ["ASP.NET MVC", "C#", "Razor", "JQuery", "JavaScript", "SQL Server", "TFS"]
     },
     {
       "startYear": 2018,
       "endYear": 2020,
       "company": "Sistran",
       "role": "Analista Desarrollador Sr.",
-      "industry": "Seguros Core (LATAM)",
-      "technologies": ["SOAP", "REST", "ASP.NET MVC", "C#", "RabbitMQ", "Razor", "JQuery", "SQL", ".NET Core 2.2", "Git"]
+      "industry": "Seguros Core - Clientes LATAM",
+      "technologies": ["SOAP", "REST", "ASP.NET MVC", "C#", "RabbitMQ", "Razor", "JQuery", "SQL Server", "LINQ", ".NET Core 2.2", "Git"]
     },
     {
       "startYear": 2016,
       "endYear": 2018,
       "company": "Pangea Group",
-      "role": "Ingeniero Desarrollador",
-      "industry": "WMS, ERP (Colombia/Ecuador)",
-      "technologies": ["C#", "WPF", "Razor", "SQL", "Git"]
+      "role": "Ingeniero Desarrollador y Consultor",
+      "industry": "WMS, Pedidos Online, Sistemas ERP - Colombia/Ecuador",
+      "technologies": ["C#", "WPF", "Razor", "SQL Server", "Git"]
     },
     {
       "startYear": 2015,
       "endYear": 2016,
       "company": "Panzzer",
       "role": "Desarrollador de software",
-      "industry": "Control de planta",
+      "industry": "Sistema control de planta",
       "technologies": ["PHP", "Laravel 5.0", "Bootstrap 3", "PostgreSQL"]
     }
   ],
@@ -90,20 +95,20 @@
     {
       "startYear": 2015,
       "endYear": 2016,
-      "institution": "SENA",
+      "institution": "Servicio Nacional de Aprendizaje (SENA)",
       "degree": "Tecnólogo en Análisis y Desarrollo de Sistemas de Información"
     },
     {
       "startYear": 2013,
       "endYear": 2014,
-      "institution": "SENA",
-      "degree": "Técnico en Programación de Software"
+      "institution": "Servicio Nacional de Aprendizaje (SENA)",
+      "degree": "Técnico Bachiller en Programación de Software"
     }
   ],
   "certifications": [
     "Prework: Configuración de Entorno de Desarrollo en Windows",
     "Cómo y Por Qué Aprender Data Science e Inteligencia Artificial",
-    "Introducción a C#",
+    "Curso de Introducción a C#",
     "Docker para desarrolladores .NET",
     "Fundamentos de Ingeniería de Software"
   ]

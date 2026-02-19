@@ -2,9 +2,7 @@
 
 CV/Portfolio personal usando Blazor WebAssembly.
 
-## Objetivo
-
-Página web de currículum con datos dinámicos cargados desde JSON. Los años de experiencia se calculan automáticamente.
+**Live:** https://cfonseca23.github.io/profile/
 
 ## Arquitectura
 
@@ -19,11 +17,7 @@ Página web de currículum con datos dinámicos cargados desde JSON. Los años d
 dotnet run
 ```
 
-## Release
+## Deploy
 
-```powershell
-dotnet publish Profile.csproj -c Release -o release; Copy-Item "release\wwwroot\index.html" "release\wwwroot\404.html"
-```
-
-Output: `release/wwwroot/`
+Push a `main` ejecuta automáticamente GitHub Actions y publica a GitHub Pages.
 

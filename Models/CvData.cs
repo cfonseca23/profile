@@ -4,6 +4,8 @@ public class CvData
 {
     public PersonalInfo Personal { get; set; } = new();
     public string Summary { get; set; } = string.Empty;
+    public string? PhotoUrl { get; set; }
+    public string? CvUrl { get; set; }
     public List<Skill> Skills { get; set; } = [];
     public List<Experience> Experiences { get; set; } = [];
     public List<Education> Education { get; set; } = [];
