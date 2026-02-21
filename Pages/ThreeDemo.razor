@@ -1,6 +1,7 @@
 @page "/three-demo"
 @implements IAsyncDisposable
 @inject IJSRuntime JS
+@inject NavigationManager Navigation
 
 <PageTitle>Three Demo</PageTitle>
 
@@ -17,7 +18,8 @@
             return;
         }
 
-        module = await JS.InvokeAsync<IJSObjectReference>("import", "/js/three-bridge.js");
+        var moduleUrl = new Uri(new Uri(Navigation.BaseUri), "js/three-bridge.js").ToString();
+        module = await JS.InvokeAsync<IJSObjectReference>("import", moduleUrl);
         await module.InvokeVoidAsync("initThree", canvasRef);
     }
 
