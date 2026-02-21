@@ -1,9 +1,9 @@
-@page "/3d"
+@page "/love3d"
 @implements IAsyncDisposable
 @inject IJSRuntime JS
 @inject NavigationManager Navigation
 
-<PageTitle>3D</PageTitle>
+<PageTitle>Love 3D</PageTitle>
 
 <canvas @ref="canvasRef" style="position:fixed; inset:0; width:100vw; height:100dvh; display:block;"></canvas>
 
@@ -22,9 +22,13 @@
         module = await JS.InvokeAsync<IJSObjectReference>("import", moduleUrl);
         await module.InvokeVoidAsync("initThree", canvasRef, new
         {
-            text = "3D Demo",
-            emissiveColor = "0x00bcd4",
-            accentColor = "0x00bcd4"
+            text = "Yessica ❤️✨",
+            emissiveColor = "0xff4fa3",
+            accentColor = "0xff4fa3",
+            backgroundColor = "0x120814",
+            textColor = "0x1a1a1a",
+            textSize = 0.52,
+            textDepth = 0.11
         });
     }
 

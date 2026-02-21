@@ -1,0 +1,28 @@
+<nav class="layout-nav navbar navbar-expand-lg navbar-dark bg-dark shadow-sm sticky-top">
+    <div class="container">
+        <NavLink class="navbar-brand fw-semibold" href="" Match="NavLinkMatch.All">Cristhian Fonseca</NavLink>
+
+        <button class="navbar-toggler" type="button" @onclick="ToggleMenu" aria-expanded="@_isOpen" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse @(_isOpen ? "show" : string.Empty)">
+            <ul class="navbar-nav ms-auto gap-lg-2">
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="" Match="NavLinkMatch.All" @onclick="CloseMenu">CV</NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="love3d" @onclick="CloseMenu">❤️</NavLink>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+@code {
+    private bool _isOpen;
+
+    private void ToggleMenu() => _isOpen = !_isOpen;
+
+    private void CloseMenu() => _isOpen = false;
+}
