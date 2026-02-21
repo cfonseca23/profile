@@ -1,11 +1,13 @@
 ﻿@inherits LayoutComponentBase
 
-<main>
-    @Body
-</main>
+<div class="layout-shell">
+    <main class="layout-main" role="main">
+        @Body
+    </main>
 
-<footer class="bg-dark text-white text-center py-3 mt-5">
-    <div class="container">
-        <small>&copy; @DateTime.Now.Year Cristhian Fonseca</small>
-    </div>
-</footer>
+    <footer class="layout-footer bg-dark text-white text-center py-3">
+        <div class="container">
+            <small>&copy; @DateTime.Now.Year Cristhian Fonseca</small>
+        </div>
+    </footer>
+</div>

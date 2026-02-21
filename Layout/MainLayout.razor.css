@@ -4,6 +4,22 @@
     flex-direction: column;
 }
 
+.layout-shell {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.layout-main {
+    flex: 1 0 auto;
+    width: 100%;
+    padding: 0;
+}
+
+.layout-footer {
+    margin-top: auto;
+}
+
 main {
     flex: 1;
 }
