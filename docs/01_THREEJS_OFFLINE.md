@@ -212,6 +212,7 @@ export function initThree(canvas) {
 
 ```razor
 @inject IJSRuntime JS
+@inject NavigationManager Navigation
 
 <canvas @ref="canvasRef" style="width:100%; height:420px; display:block;"></canvas>
 
@@ -223,7 +224,8 @@ export function initThree(canvas) {
   {
     if (!firstRender) return;
 
-    module = await JS.InvokeAsync<IJSObjectReference>("import", "/js/three-bridge.js");
+    var moduleUrl = new Uri(new Uri(Navigation.BaseUri), "js/three-bridge.js").ToString();
+    module = await JS.InvokeAsync<IJSObjectReference>("import", moduleUrl);
     await module.InvokeVoidAsync("initThree", canvasRef);
   }
 
@@ -353,9 +355,9 @@ Durante la implementación en este repo se aplicaron estos ajustes adicionales:
   - Motivo: `OrbitControls.js` usa `from 'three'` (bare specifier).
   - Solución aplicada: mapear `three` a `./lib/three/three.module.js`.
 
-4. **Se ajustó el import dinámico en `ThreeDemo.razor` a ruta absoluta**
-  - De `./js/three-bridge.js` a `/js/three-bridge.js`.
-  - Motivo: estabilizar la resolución del módulo en runtime.
+4. **Se ajustó el import dinámico en `ThreeDemo.razor` para usar `Navigation.BaseUri`**
+  - Construye la URL final con `new Uri(new Uri(Navigation.BaseUri), "js/three-bridge.js")`.
+  - Motivo: funciona tanto en local (`/`) como en GitHub Pages (`/profile/`) sin 404.
 
 5. **Se agregó `wwwroot/lib/three/` a `.gitignore`**
   - Motivo: carpeta generada automáticamente en Build/Publish.
@@ -381,6 +383,7 @@ Solo modifica `<ThreeJsVersion>0.183.1</ThreeJsVersion>` en el `.csproj` y recon
 
 ### Rutas en GitHub Pages
 El `base href` se ajusta a `/profile/` en el workflow. Las rutas relativas en el bridge JS (`../lib/three/...`) funcionan correctamente tanto en local como en producción porque son relativas al propio archivo JS.
+Además, el import dinámico del módulo en Blazor usa `Navigation.BaseUri` para respetar automáticamente el subpath de GitHub Pages.
 
 ---
 
@@ -405,6 +408,7 @@ El `base href` se ajusta a `/profile/` en el workflow. Las rutas relativas en el
 - [x] Copia recursiva de addons con MSBuild
 - [x] Bridge ESM en `wwwroot/js/three-bridge.js`
 - [x] Página `/three-demo` en `Pages/ThreeDemo.razor`
+- [x] Import dinámico del módulo usando `Navigation.BaseUri`
 - [x] Import map en `wwwroot/index.html` para `three`
 - [x] Setup Node 20 en workflow de GitHub Pages
 - [x] `wwwroot/lib/three/` agregado en `.gitignore`
@@ -430,3 +434,62 @@ Get-ChildItem wwwroot/lib/three/ -Recurse | Select-Object FullName -First 10
 # Limpiar Three.js vendored
 Remove-Item wwwroot/lib/three/ -Recurse -Force
 ```
+
+---
+
+## Replicación Express (10 minutos)
+
+Usa este bloque como receta rápida para otro proyecto Blazor WASM:
+
+1. **`.csproj`**
+  - Copiar propiedades `ThreeJsVersion`, `ThreeJsWwwrootDir`, `ErrorOnMissingNpm`.
+  - Copiar target `VendorThreeJs` (incluyendo copia de `three.module.js`, `three.core.js` y addons con `ItemGroup + Copy`).
+
+2. **`wwwroot/js/three-bridge.js`**
+  - Crear bridge con imports locales:
+  - `../lib/three/three.module.js`
+  - `../lib/three/addons/controls/OrbitControls.js`
+
+3. **`Pages/ThreeDemo.razor` (o componente equivalente)**
+  - Inyectar `IJSRuntime` y `NavigationManager`.
+  - Importar el módulo con `Navigation.BaseUri`:
+  - `new Uri(new Uri(Navigation.BaseUri), "js/three-bridge.js")`
+
+4. **`wwwroot/index.html`**
+  - Agregar import map para bare specifier:
+  - `"three": "./lib/three/three.module.js"`
+
+5. **`deploy.yml` de GitHub Pages**
+  - Agregar `actions/setup-node@v4` con Node 20 antes de `dotnet publish`.
+  - Mantener el reemplazo de `<base href="/" />` por el subpath del repo (ej: `/profile/`).
+
+6. **`.gitignore`**
+  - Agregar `wwwroot/lib/three/`.
+
+7. **Validar**
+  - `dotnet build`
+  - `dotnet run`
+  - Verificar que no haya 404 en:
+    - `/js/three-bridge.js` (resuelto por BaseUri)
+    - `/lib/three/three.module.js`
+    - `/lib/three/three.core.js`
+
+---
+
+## Troubleshooting Rápido
+
+| Error | Causa probable | Solución |
+|------|-----------------|----------|
+| `three.core.js 404` | No se copió `three.core.js` en vendoring | Agregar `Copy` de `build/three.core.js` en el target |
+| `Failed to fetch dynamically imported module ... /js/three-bridge.js` en Pages | Import absoluto no respeta subpath del repo | Construir URL con `Navigation.BaseUri` |
+| `Failed to resolve module specifier 'three'` | Falta import map | Agregar `"three": "./lib/three/three.module.js"` en `index.html` |
+| `MSB3073` en `node -e` (Windows) | Escape/quoting en comando embebido | Reemplazar por `ItemGroup + Copy` recursivo de MSBuild |
+| Funciona local, falla en CI | No hay Node/npm en workflow | Agregar `actions/setup-node@v4` antes de publish |
+
+---
+
+## Variables a cambiar al replicar
+
+- `ThreeJsVersion`: fijar versión objetivo (`0.183.1`, etc.).
+- `base href` en deploy: reemplazar por el nombre real del repo (`/tu-repo/`).
+- Ruta de página demo: `/three-demo` o la ruta que definas en el nuevo proyecto.
