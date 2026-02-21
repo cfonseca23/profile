@@ -1,0 +1,31 @@
+@page "/three-demo"
+@implements IAsyncDisposable
+@inject IJSRuntime JS
+
+<PageTitle>Three Demo</PageTitle>
+
+<canvas @ref="canvasRef" style="width:100%; height:420px; display:block;"></canvas>
+
+@code {
+    private ElementReference canvasRef;
+    private IJSObjectReference? module;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+        {
+            return;
+        }
+
+        module = await JS.InvokeAsync<IJSObjectReference>("import", "/js/three-bridge.js");
+        await module.InvokeVoidAsync("initThree", canvasRef);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (module is not null)
+        {
+            await module.DisposeAsync();
+        }
+    }
+}

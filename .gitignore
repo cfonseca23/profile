@@ -82,6 +82,7 @@ BrowserLink/
 
 # Blazor specific
 wwwroot/_framework/
+wwwroot/lib/three/
 
 # Service worker cache
 service-worker-assets.js

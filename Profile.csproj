@@ -5,11 +5,49 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <OverrideHtmlAssetPlaceholders>true</OverrideHtmlAssetPlaceholders>
+
+    <ThreeJsVersion>0.183.1</ThreeJsVersion>
+    <ThreeJsWwwrootDir>$(MSBuildProjectDirectory)\wwwroot\lib\three</ThreeJsWwwrootDir>
+    <ErrorOnMissingNpm>true</ErrorOnMissingNpm>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.2" PrivateAssets="all" />
   </ItemGroup>
+
+  <Target Name="VendorThreeJs" BeforeTargets="Build;Publish">
+    <PropertyGroup>
+      <_ThreeObjDir>$(BaseIntermediateOutputPath)threejs</_ThreeObjDir>
+    </PropertyGroup>
+
+    <Exec Command="npm --version" ContinueOnError="true">
+      <Output TaskParameter="ExitCode" PropertyName="_NpmExitCode" />
+    </Exec>
+
+    <Error Condition="'$(_NpmExitCode)' != '0' AND '$(ErrorOnMissingNpm)' == 'true'"
+           Text="npm no está disponible. Instala Node.js (incluye npm) o desactiva ErrorOnMissingNpm." />
+
+    <MakeDir Directories="$(_ThreeObjDir)" />
+
+    <Exec WorkingDirectory="$(_ThreeObjDir)" Command="npm init -y" />
+    <Exec WorkingDirectory="$(_ThreeObjDir)" Command="npm i three@$(ThreeJsVersion)" />
+
+    <RemoveDir Directories="$(ThreeJsWwwrootDir)" />
+    <MakeDir Directories="$(ThreeJsWwwrootDir)\addons" />
+
+        <Copy SourceFiles="$(_ThreeObjDir)\node_modules\three\build\three.module.js"
+          DestinationFiles="$(ThreeJsWwwrootDir)\three.module.js" />
+
+        <Copy SourceFiles="$(_ThreeObjDir)\node_modules\three\build\three.core.js"
+          DestinationFiles="$(ThreeJsWwwrootDir)\three.core.js" />
+
+    <ItemGroup>
+      <_ThreeAddons Include="$(_ThreeObjDir)\node_modules\three\examples\jsm\**\*.*" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(_ThreeAddons)"
+          DestinationFiles="@(_ThreeAddons->'$(ThreeJsWwwrootDir)\addons\%(RecursiveDir)%(Filename)%(Extension)')" />
+  </Target>
 
 </Project>
