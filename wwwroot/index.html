@@ -21,15 +21,186 @@
         }
     </script>
     <script type="importmap"></script>
+    <style>
+        @keyframes profile-slide {
+            0% {
+                transform: translateX(-25%);
+            }
+
+            100% {
+                transform: translateX(25%);
+            }
+        }
+
+        @keyframes profile-roller {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .profile-wasm-bg {
+            animation: profile-slide 3s ease-in-out infinite alternate;
+            background-image: linear-gradient(-60deg, var(--bs-dark) 50%, var(--bs-primary) 50%);
+            bottom: 0;
+            left: -50%;
+            opacity: 0.55;
+            position: fixed;
+            right: -50%;
+            top: 0;
+            z-index: 0;
+        }
+
+        .profile-wasm-bg.bg-2 {
+            animation-direction: alternate-reverse;
+            animation-duration: 4s;
+        }
+
+        .profile-wasm-bg.bg-3 {
+            animation-duration: 5s;
+        }
+
+        .profile-loader-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            color: var(--bs-light);
+            padding: 2rem;
+        }
+
+        .profile-loader-title {
+            font-size: clamp(1.35rem, 3vw, 2rem);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-loader-subtitle {
+            font-size: 0.95rem;
+            opacity: 0.9;
+            margin-bottom: 1rem;
+        }
+
+        .profile-lds-roller {
+            display: inline-block;
+            position: relative;
+            width: 80px;
+            height: 80px;
+        }
+
+        .profile-lds-roller div {
+            animation: profile-roller 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+            transform-origin: 40px 40px;
+        }
+
+        .profile-lds-roller div::after {
+            content: "";
+            display: block;
+            position: absolute;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--bs-light);
+            margin: -4px 0 0 -4px;
+        }
+
+        .profile-lds-roller div:nth-child(1) {
+            animation-delay: -0.036s;
+        }
+
+        .profile-lds-roller div:nth-child(1)::after {
+            top: 63px;
+            left: 63px;
+        }
+
+        .profile-lds-roller div:nth-child(2) {
+            animation-delay: -0.072s;
+        }
+
+        .profile-lds-roller div:nth-child(2)::after {
+            top: 68px;
+            left: 56px;
+        }
+
+        .profile-lds-roller div:nth-child(3) {
+            animation-delay: -0.108s;
+        }
+
+        .profile-lds-roller div:nth-child(3)::after {
+            top: 71px;
+            left: 48px;
+        }
+
+        .profile-lds-roller div:nth-child(4) {
+            animation-delay: -0.144s;
+        }
+
+        .profile-lds-roller div:nth-child(4)::after {
+            top: 72px;
+            left: 40px;
+        }
+
+        .profile-lds-roller div:nth-child(5) {
+            animation-delay: -0.18s;
+        }
+
+        .profile-lds-roller div:nth-child(5)::after {
+            top: 71px;
+            left: 32px;
+        }
+
+        .profile-lds-roller div:nth-child(6) {
+            animation-delay: -0.216s;
+        }
+
+        .profile-lds-roller div:nth-child(6)::after {
+            top: 68px;
+            left: 24px;
+        }
+
+        .profile-lds-roller div:nth-child(7) {
+            animation-delay: -0.252s;
+        }
+
+        .profile-lds-roller div:nth-child(7)::after {
+            top: 63px;
+            left: 17px;
+        }
+
+        .profile-lds-roller div:nth-child(8) {
+            animation-delay: -0.288s;
+        }
+
+        .profile-lds-roller div:nth-child(8)::after {
+            top: 56px;
+            left: 12px;
+        }
+    </style>
 </head>
 
 <body>
     <div id="app">
-        <svg class="loading-progress">
-            <circle r="40%" cx="50%" cy="50%" />
-            <circle r="40%" cx="50%" cy="50%" />
-        </svg>
-        <div class="loading-progress-text"></div>
+        <div style="position: fixed; inset: 0;">
+            <div class="profile-wasm-bg"></div>
+            <div class="profile-wasm-bg bg-2"></div>
+            <div class="profile-wasm-bg bg-3"></div>
+            <div class="profile-loader-wrap">
+                <div>
+                    <h1 class="profile-loader-title">Cristhian Fonseca - WebApp</h1>
+                    <p class="profile-loader-subtitle">Cargando portafolio...</p>
+                    <div class="profile-lds-roller" role="status" aria-label="Cargando">
+                        <div></div><div></div><div></div><div></div>
+                        <div></div><div></div><div></div><div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div id="blazor-error-ui">
