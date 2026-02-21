@@ -8,13 +8,20 @@
         @foreach (var skill in Items)
         {
             <div class="col-md-6 col-lg-4">
-                <div class="card h-100 shadow-sm">
+                <div class="card h-100 shadow-sm border-0 @skill.CardClass">
                     <div class="card-body">
-                        <h3 class="card-title h6 text-secondary fw-bold mb-3">@skill.Category</h3>
+                        <h3 class="card-title h6 text-secondary fw-bold mb-3 d-flex align-items-center gap-2">
+                            <span>@(string.IsNullOrWhiteSpace(skill.Emoji) ? "⭐" : skill.Emoji)</span>
+                            <span>@skill.Category</span>
+                        </h3>
+                        @if (!string.IsNullOrWhiteSpace(skill.Description))
+                        {
+                            <p class="text-muted small mb-3">@skill.Description</p>
+                        }
                         <div class="d-flex flex-wrap gap-2">
                             @foreach (var item in skill.Items)
                             {
-                                <span class="badge bg-dark bg-opacity-75">@item</span>
+                                <span class="badge @(string.IsNullOrWhiteSpace(skill.BadgeClass) ? "text-bg-secondary" : skill.BadgeClass)">@item</span>
                             }
                         </div>
                     </div>

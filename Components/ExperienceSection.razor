@@ -8,7 +8,7 @@
         @foreach (var exp in Experiences)
         {
             <div class="col-12 mb-3">
-                <div class="card shadow-sm">
+                <div class="card shadow-sm border-0">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-start flex-wrap">
                             <div>
@@ -16,11 +16,23 @@
                                 <p class="text-secondary mb-1 fw-semibold">@exp.Company</p>
                                 <p class="text-muted small mb-2">@exp.Industry</p>
                             </div>
-                            <span class="badge bg-secondary">@exp.Period</span>
+                            <div class="d-flex gap-2 mt-1 mt-sm-0">
+                                <span class="badge bg-secondary">@exp.Period</span>
+                                <span class="badge text-bg-light border">@exp.Duration</span>
+                            </div>
                         </div>
                         @if (!string.IsNullOrEmpty(exp.Description))
                         {
                             <p class="text-muted mt-2 mb-2">@exp.Description</p>
+                        }
+                        @if (exp.Highlights.Count > 0)
+                        {
+                            <ul class="mt-2 mb-2 ps-3">
+                                @foreach (var highlight in exp.Highlights)
+                                {
+                                    <li class="text-muted">@highlight</li>
+                                }
+                            </ul>
                         }
                         @if (exp.Technologies.Count > 0)
                         {

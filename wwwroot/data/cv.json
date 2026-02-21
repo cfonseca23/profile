@@ -8,85 +8,148 @@
   },
   "photoUrl": "images/profile.jpg",
   "cvUrl": "docs/Profile.pdf",
-"summary": "Ingeniero con más de {years} años de experiencia en el desarrollo de web apps, web services, API REST y aplicaciones de escritorio.\n\nMi trayectoria profesional abarca una amplia variedad de proyectos tecnológicos en diversas industrias y contextos incluyendo empresas financieras, aseguradoras, comisionistas de bolsa de valores, así como desarrollos en sistemas ERP y WMS para clientes en América Latina.\n\nMi experiencia tecnológica se extiende a través de un conjunto diverso de herramientas y plataformas, incluyendo C#, .NET Framework 3.5 a 4.8, .NET Core 5 a .NET 8, Blazor, JavaScript, Entity Framework Core, RabbitMQ, servicios web SOAP y API REST.\n\nEn bases de datos, he trabajado con SQL Server, Oracle Database y PostgreSQL, lo que me ha permitido diseñar y desarrollar soluciones sólidas y escalables para una variedad de aplicaciones.\n\nPara el control de versiones, he usado Azure DevOps (Team Foundation Version Control & Git), GitHub y SVN Tortoise, lo que facilita mi colaboración eficiente en equipos de desarrollo distribuidos.",
+"summary": "Ingeniero de software con más de {years} años de experiencia construyendo aplicaciones web, servicios empresariales y soluciones de escritorio.\n\nHe participado en proyectos para sectores financiero, asegurador y bursátil, además de iniciativas ERP y WMS para clientes en América Latina, combinando visión técnica con foco en resultados de negocio.\n\nMi stack principal incluye C#, .NET Framework 3.5 a 4.8, .NET 5 a 8, Blazor, JavaScript, Entity Framework Core, RabbitMQ, SOAP y API REST.\n\nTambién cuento con experiencia sólida en SQL Server, Oracle Database y PostgreSQL, diseñando soluciones robustas, mantenibles y escalables.\n\nTrabajo con control de versiones en Azure DevOps (TFVC y Git), GitHub y SVN, colaborando de forma efectiva en equipos distribuidos.",
   "skills": [
     {
       "category": "Backend",
+      "emoji": "🧠",
+      "badgeClass": "text-bg-primary",
+      "description": "Arquitectura, APIs y lógica de negocio en .NET.",
+      "cardClass": "bg-light",
       "items": ["C#", ".NET Framework 3.5-4.8", ".NET 5-8", "Entity Framework Core", "LINQ"]
     },
     {
       "category": "Frontend",
+      "emoji": "🎨",
+      "badgeClass": "text-bg-info",
+      "description": "Interfaces web con foco en claridad y productividad.",
+      "cardClass": "bg-light",
       "items": ["Blazor", "JavaScript", "Razor", "JQuery"]
     },
     {
       "category": "Mensajería",
+      "emoji": "📨",
+      "badgeClass": "text-bg-warning",
+      "description": "Comunicación asíncrona y procesamiento desacoplado.",
+      "cardClass": "bg-light",
       "items": ["RabbitMQ"]
     },
     {
       "category": "Web Services",
+      "emoji": "🌐",
+      "badgeClass": "text-bg-success",
+      "description": "Diseño e integración de servicios SOAP y REST.",
+      "cardClass": "bg-light",
       "items": ["API REST", "SOAP", "ASP.NET MVC", "Web API"]
     },
     {
       "category": "Bases de datos",
+      "emoji": "🗄️",
+      "badgeClass": "text-bg-secondary",
+      "description": "Modelado y consulta para sistemas transaccionales.",
+      "cardClass": "bg-light",
       "items": ["SQL Server", "Oracle Database", "PostgreSQL"]
     },
     {
       "category": "Control de versiones",
+      "emoji": "🧩",
+      "badgeClass": "text-bg-dark",
+      "description": "Flujos de trabajo colaborativos y trazabilidad de cambios.",
+      "cardClass": "bg-light",
       "items": ["Azure DevOps", "TFVC", "Git", "GitHub", "SVN Tortoise"]
     },
     {
       "category": "Integración",
+      "emoji": "🔌",
+      "badgeClass": "text-bg-danger",
+      "description": "Integración de sistemas empresariales y mensajería.",
+      "cardClass": "bg-light",
       "items": ["IBM BUS", "IBM ACE12"]
     },
     {
       "category": "Otros",
-      "items": ["WPF", "Bootstrap", "Semantic Kernel"]
+      "emoji": "✨",
+      "badgeClass": "text-bg-primary",
+      "description": "Herramientas complementarias para soluciones modernas.",
+      "cardClass": "bg-light",
+      "items": ["Microsoft Agent Framework", "WPF", "Bootstrap", "Semantic Kernel"]
     }
   ],
   "experiences": [
     {
+      "startMonth": 11,
       "startYear": 2021,
+      "endMonth": null,
       "endYear": null,
       "company": "Davivienda Corredores",
       "role": "Ingeniero de desarrollo / Líder técnico",
       "industry": "Comisionista de bolsa de valores",
-      "description": "Líder técnico, nuevos desarrollos y soporte de aplicaciones, proyectos .NET IBM BUS - IBM ACE12.",
+      "description": "Liderazgo técnico, desarrollo de nuevas funcionalidades y soporte continuo de aplicaciones críticas del negocio.",
+      "highlights": [
+        "Liderazgo técnico en evolutivos críticos de negocio",
+        "Coordinación de soporte y continuidad operativa",
+        "Integraciones empresariales con IBM BUS y ACE12"
+      ],
       "technologies": [".NET", "IBM BUS", "IBM ACE12", "SQL Server"]
     },
     {
+      "startMonth": 7,
       "startYear": 2020,
+      "endMonth": 11,
       "endYear": 2021,
       "company": "ITBF Consulting",
       "role": "Ingeniero de desarrollo",
       "industry": "Financiero - Software interno de negocio",
-      "description": "Nuevos desarrollos y soporte de aplicaciones web.",
+      "description": "Desarrollo y mantenimiento de aplicaciones web internas para procesos financieros.",
+      "highlights": [
+        "Desarrollo de funcionalidades para procesos financieros",
+        "Mantenimiento evolutivo y correctivo de aplicaciones web"
+      ],
       "technologies": ["ASP.NET MVC", "C#", "Razor", "JQuery", "JavaScript", "SQL Server", "TFS"]
     },
     {
+      "startMonth": 3,
       "startYear": 2018,
+      "endMonth": 7,
       "endYear": 2020,
       "company": "Sistran",
       "role": "Analista Desarrollador Sr.",
       "industry": "Seguros Core - Clientes LATAM",
-      "description": "Nuevos desarrollos y soporte de aplicaciones en Servicios SOAP REST. Clientes LATAM.",
+      "description": "Desarrollo y soporte de soluciones para core de seguros con integración de servicios SOAP/REST para clientes LATAM.",
+      "highlights": [
+        "Implementación de servicios SOAP y REST para core de seguros",
+        "Participación en proyectos regionales para clientes LATAM"
+      ],
       "technologies": ["SOAP", "REST", "ASP.NET MVC", "C#", "RabbitMQ", "Razor", "JQuery", "SQL Server", "LINQ", ".NET Core 2.2", "Git"]
     },
     {
+      "startMonth": 6,
       "startYear": 2016,
+      "endMonth": 3,
       "endYear": 2018,
       "company": "Pangea Group",
       "role": "Ingeniero Desarrollador y Consultor",
       "industry": "WMS, Pedidos Online, Sistemas ERP - Colombia/Ecuador",
-      "description": "Nuevos desarrollos y soporte de aplicaciones Web y escritorio. Clientes Colombia – Ecuador.",
+      "description": "Desarrollo y soporte de aplicaciones web y de escritorio para operaciones WMS, pedidos online y ERP.",
+      "highlights": [
+        "Despliegue de soluciones para operaciones WMS y ERP",
+        "Consultoría técnica para clientes en Colombia y Ecuador"
+      ],
       "technologies": ["C#", "WPF", "Razor", "SQL Server", "Git"]
     },
     {
+      "startMonth": 12,
       "startYear": 2015,
+      "endMonth": 6,
       "endYear": 2016,
       "company": "Panzzer",
-      "role": "Desarrollador de software",
+      "role": "Pasante - Desarrollador de software",
       "industry": "Sistema control de planta",
-      "description": "Desarrollo del sistema para el Control de planta con diseño responsivo.",
+      "description": "Desarrollo de sistema de control de planta con interfaz web responsiva.",
+      "highlights": [
+        "Construcción de interfaz responsiva para control operativo",
+        "Implementación de módulos clave en Laravel y PostgreSQL"
+      ],
       "technologies": ["PHP", "Laravel 5.0", "Bootstrap 3", "PostgreSQL"]
     }
   ],
