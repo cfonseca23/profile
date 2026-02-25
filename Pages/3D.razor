@@ -1,4 +1,5 @@
 @page "/3d"
+@using System.Globalization
 @implements IAsyncDisposable
 @inject IJSRuntime JS
 @inject NavigationManager Navigation
@@ -7,6 +8,57 @@
 
 <div class="canvas-container">
     <canvas @ref="canvasRef"></canvas>
+    
+    <div class="config-panel @(isOpen ? "open" : "")">
+        <button class="config-toggle" @onclick="() => isOpen = !isOpen" title="Configuración">
+            @(isOpen ? "✕" : "⚙")
+        </button>
+        
+        @if (isOpen)
+        {
+            <div class="config-body">
+                <h6>Configuración 3D</h6>
+                
+                <label>Texto</label>
+                <input type="text" @bind="cfg.Text" @bind:event="oninput" />
+                
+                <label>Tamaño texto: @cfg.TextSize.ToString("F2")</label>
+                <input type="range" min="0.2" max="1.5" step="0.05" value="@cfg.TextSize" @oninput="e => cfg.TextSize = ParseDouble(e.Value, 0.5)" />
+                
+                <label>Profundidad: @cfg.TextDepth.ToString("F2")</label>
+                <input type="range" min="0.05" max="0.5" step="0.01" value="@cfg.TextDepth" @oninput="e => cfg.TextDepth = ParseDouble(e.Value, 0.1)" />
+                
+                <label>Color texto</label>
+                <input type="color" @bind="cfg.TextColorHex" />
+                
+                <label>Color brillo</label>
+                <input type="color" @bind="cfg.EmissiveColorHex" />
+                
+                <label>Intensidad brillo: @cfg.EmissiveIntensity.ToString("F1")</label>
+                <input type="range" min="0" max="5" step="0.1" value="@cfg.EmissiveIntensity" @oninput="e => cfg.EmissiveIntensity = ParseDouble(e.Value, 2)" />
+                
+                <label>Color fondo</label>
+                <input type="color" @bind="cfg.BackgroundColorHex" />
+                
+                <label>Color luz acento</label>
+                <input type="color" @bind="cfg.AccentColorHex" />
+                
+                <label>Intensidad luz: @cfg.AccentIntensity.ToString("F1")</label>
+                <input type="range" min="0" max="10" step="0.5" value="@cfg.AccentIntensity" @oninput="e => cfg.AccentIntensity = ParseDouble(e.Value, 3)" />
+                
+                <label>Cámara Z: @cfg.CameraZ.ToString("F1")</label>
+                <input type="range" min="3" max="15" step="0.5" value="@cfg.CameraZ" @oninput="e => cfg.CameraZ = ParseDouble(e.Value, 6)" />
+                
+                <label>Cámara Y: @cfg.CameraY.ToString("F1")</label>
+                <input type="range" min="0" max="5" step="0.1" value="@cfg.CameraY" @oninput="e => cfg.CameraY = ParseDouble(e.Value, 1.5)" />
+                
+                <div class="config-buttons">
+                    <button class="btn-apply" @onclick="ApplyConfig">Aplicar</button>
+                    <button class="btn-reset" @onclick="ResetConfig">Reset</button>
+                </div>
+            </div>
+        }
+    </div>
 </div>
 
 <style>
@@ -26,11 +78,167 @@
         height: 100%;
         display: block;
     }
+
+    .config-panel {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        z-index: 10;
+    }
+
+    .config-toggle {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border: none;
+        background: rgba(0, 188, 212, 0.85);
+        color: #fff;
+        font-size: 16px;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    .config-toggle:hover {
+        background: #00bcd4;
+    }
+
+    .config-panel.open .config-toggle {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        z-index: 2;
+    }
+
+    .config-body {
+        background: rgba(18, 18, 24, 0.95);
+        border: 1px solid rgba(0, 188, 212, 0.4);
+        border-radius: 10px;
+        padding: 50px 16px 16px;
+        width: 240px;
+        max-height: 65vh;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    }
+
+    .config-body h6 {
+        margin: 0 0 8px;
+        color: #00bcd4;
+        font-size: 14px;
+    }
+
+    .config-body label {
+        color: #aaa;
+        font-size: 11px;
+        margin-top: 4px;
+    }
+
+    .config-body input[type="text"] {
+        padding: 6px 8px;
+        border: 1px solid #444;
+        border-radius: 4px;
+        background: #1a1a24;
+        color: #fff;
+        font-size: 13px;
+    }
+
+    .config-body input[type="color"] {
+        width: 100%;
+        height: 28px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .config-body input[type="range"] {
+        width: 100%;
+        accent-color: #00bcd4;
+    }
+
+    .config-buttons {
+        display: flex;
+        gap: 8px;
+        margin-top: 12px;
+    }
+
+    .btn-apply, .btn-reset {
+        flex: 1;
+        padding: 8px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 12px;
+    }
+
+    .btn-apply {
+        background: #00bcd4;
+        color: #fff;
+    }
+
+    .btn-reset {
+        background: transparent;
+        border: 1px solid #666;
+        color: #aaa;
+    }
+
+    .btn-apply:hover { background: #00acc1; }
+    .btn-reset:hover { border-color: #888; color: #fff; }
+
+    .config-body::-webkit-scrollbar { width: 5px; }
+    .config-body::-webkit-scrollbar-thumb { background: #00bcd4; border-radius: 3px; }
 </style>
 
 @code {
     private ElementReference canvasRef;
     private IJSObjectReference? module;
+    private bool isOpen = false;
+    private Config cfg = new();
+
+    private static double ParseDouble(object? value, double fallback) =>
+        double.TryParse(value?.ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out var result) 
+            ? result : fallback;
+
+    // Valores idénticos a DEFAULT_CONFIG en three-bridge.js
+    private class Config
+    {
+        public string Text { get; set; } = "3D";
+        public double TextSize { get; set; } = 0.5;
+        public double TextDepth { get; set; } = 0.1;
+        public int TextColor { get; set; } = 0x111111;
+        public int EmissiveColor { get; set; } = 0x00ffff;
+        public double EmissiveIntensity { get; set; } = 2;
+        public int BackgroundColor { get; set; } = 0x050505;
+        public int AccentColor { get; set; } = 0x00ffff;
+        public double AccentIntensity { get; set; } = 3;
+        public double CameraZ { get; set; } = 6;
+        public double CameraY { get; set; } = 1.5;
+
+        public string TextColorHex
+        {
+            get => $"#{TextColor:X6}";
+            set => TextColor = ParseHex(value);
+        }
+        public string EmissiveColorHex
+        {
+            get => $"#{EmissiveColor:X6}";
+            set => EmissiveColor = ParseHex(value);
+        }
+        public string BackgroundColorHex
+        {
+            get => $"#{BackgroundColor:X6}";
+            set => BackgroundColor = ParseHex(value);
+        }
+        public string AccentColorHex
+        {
+            get => $"#{AccentColor:X6}";
+            set => AccentColor = ParseHex(value);
+        }
+
+        private static int ParseHex(string hex) =>
+            int.TryParse(hex.TrimStart('#'), System.Globalization.NumberStyles.HexNumber, null, out var v) ? v : 0;
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -38,12 +246,41 @@
 
         var moduleUrl = new Uri(new Uri(Navigation.BaseUri), "js/three-bridge.js").ToString();
         module = await JS.InvokeAsync<IJSObjectReference>("import", moduleUrl);
+        await InitScene();
+    }
+
+    private async Task InitScene()
+    {
+        if (module is null) return;
         await module.InvokeVoidAsync("initThree", canvasRef, new
         {
-            text = "3D Demo",
-            emissiveColor = 0x00bcd4,
-            accentColor = 0x00bcd4
+            text = cfg.Text,
+            textSize = cfg.TextSize,
+            textDepth = cfg.TextDepth,
+            textColor = cfg.TextColor,
+            emissiveColor = cfg.EmissiveColor,
+            emissiveIntensity = cfg.EmissiveIntensity,
+            backgroundColor = cfg.BackgroundColor,
+            accentColor = cfg.AccentColor,
+            accentIntensity = cfg.AccentIntensity,
+            cameraZ = cfg.CameraZ,
+            cameraY = cfg.CameraY
         });
+    }
+
+    private async Task ApplyConfig()
+    {
+        if (module is null) return;
+        await module.InvokeVoidAsync("disposeThree");
+        await Task.Delay(50); // Dar tiempo a WebGL para limpiarse
+        await InitScene();
+    }
+
+    private async Task ResetConfig()
+    {
+        cfg = new Config();
+        StateHasChanged();
+        await ApplyConfig();
     }
 
     public async ValueTask DisposeAsync()
