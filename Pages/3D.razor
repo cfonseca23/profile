@@ -5,7 +5,28 @@
 
 <PageTitle>3D</PageTitle>
 
-<canvas @ref="canvasRef" style="position:fixed; inset:0; width:100vw; height:100dvh; display:block;"></canvas>
+<div class="canvas-container">
+    <canvas @ref="canvasRef"></canvas>
+</div>
+
+<style>
+    .canvas-container {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        min-height: 60vh;
+        flex: 1;
+        overflow: hidden;
+    }
+
+    .canvas-container canvas {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        display: block;
+    }
+</style>
 
 @code {
     private ElementReference canvasRef;
@@ -13,18 +34,15 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (!firstRender)
-        {
-            return;
-        }
+        if (!firstRender) return;
 
         var moduleUrl = new Uri(new Uri(Navigation.BaseUri), "js/three-bridge.js").ToString();
         module = await JS.InvokeAsync<IJSObjectReference>("import", moduleUrl);
         await module.InvokeVoidAsync("initThree", canvasRef, new
         {
             text = "3D Demo",
-            emissiveColor = "0x00bcd4",
-            accentColor = "0x00bcd4"
+            emissiveColor = 0x00bcd4,
+            accentColor = 0x00bcd4
         });
     }
 
