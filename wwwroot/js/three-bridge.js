@@ -4,6 +4,7 @@ import { FontLoader } from "../lib/three/addons/loaders/FontLoader.js";
 import { TextGeometry } from "../lib/three/addons/geometries/TextGeometry.js";
 
 let current = null;
+let instanceId = 0;
 
 const DEFAULT_CONFIG = {
   text: "3D",
@@ -24,6 +25,9 @@ const DEFAULT_CONFIG = {
 
 export function initThree(canvas, options = {}) {
   disposeThree();
+
+  // Incrementar ID para detectar si esta instancia sigue activa
+  const currentInstanceId = ++instanceId;
 
   const config = {
     ...DEFAULT_CONFIG,
@@ -67,6 +71,11 @@ export function initThree(canvas, options = {}) {
 
   const loader = new FontLoader();
   loader.load(config.fontUrl, (font) => {
+    // Si la instancia cambió, no agregar objetos a una escena vieja
+    if (currentInstanceId !== instanceId || !current) {
+      return;
+    }
+
     const geometry = new TextGeometry(textOnly || sourceText, {
       font,
       size: config.textSize,
@@ -125,6 +134,10 @@ export function initThree(canvas, options = {}) {
   let animationId = 0;
 
   function animate() {
+    // Verificar que esta instancia sigue activa
+    if (currentInstanceId !== instanceId) {
+      return;
+    }
     controls.update();
     renderer.render(scene, camera);
     animationId = requestAnimationFrame(animate);
@@ -137,7 +150,8 @@ export function initThree(canvas, options = {}) {
     scene,
     controls,
     onResize,
-    animationId
+    animationId,
+    instanceId: currentInstanceId
   };
 }
 
@@ -146,27 +160,50 @@ export function disposeThree() {
     return;
   }
 
-  cancelAnimationFrame(current.animationId);
+  // Detener animación inmediatamente
+  if (current.animationId) {
+    cancelAnimationFrame(current.animationId);
+    current.animationId = 0;
+  }
+
+  // Remover event listener
   window.removeEventListener("resize", current.onResize);
-  current.controls.dispose();
-  current.scene.traverse((obj) => {
-    if (obj.isMesh) {
-      obj.geometry?.dispose?.();
-      if (Array.isArray(obj.material)) {
-        obj.material.forEach((material) => {
-          material?.map?.dispose?.();
-          material?.dispose?.();
-        });
-      } else {
-        obj.material?.map?.dispose?.();
-        obj.material?.dispose?.();
+
+  // Dispose de controles
+  if (current.controls) {
+    current.controls.dispose();
+  }
+
+  // Limpiar todos los objetos de la escena
+  if (current.scene) {
+    while (current.scene.children.length > 0) {
+      const obj = current.scene.children[0];
+      current.scene.remove(obj);
+      
+      if (obj.geometry) {
+        obj.geometry.dispose();
       }
-    } else if (obj.isSprite) {
-      obj.material?.map?.dispose?.();
-      obj.material?.dispose?.();
+      
+      if (obj.material) {
+        if (Array.isArray(obj.material)) {
+          obj.material.forEach((mat) => {
+            if (mat.map) mat.map.dispose();
+            mat.dispose();
+          });
+        } else {
+          if (obj.material.map) obj.material.map.dispose();
+          obj.material.dispose();
+        }
+      }
     }
-  });
-  current.renderer.dispose();
+  }
+
+  // Limpiar renderer
+  if (current.renderer) {
+    current.renderer.renderLists.dispose();
+    current.renderer.dispose();
+  }
+
   current = null;
 }
 

@@ -272,7 +272,7 @@
     {
         if (module is null) return;
         await module.InvokeVoidAsync("disposeThree");
-        await Task.Delay(50); // Dar tiempo a WebGL para limpiarse
+        await Task.Delay(100); // Dar tiempo a WebGL para liberar contexto
         await InitScene();
     }
 
