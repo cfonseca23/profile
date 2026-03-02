@@ -70,23 +70,62 @@ export function initThree(canvas, options = {}, dotNetRef = null) {
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.1;
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.shadowMap.enabled = true;
 
   const scene = new THREE.Scene();
   scene.fog = new THREE.Fog(config.backgroundColor, config.fogNear, config.fogFar);
   const camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 200);
   camera.position.set(0, config.cameraY, config.cameraZ);
 
-  const backdrop = new THREE.Mesh(
-    new THREE.PlaneGeometry(20, 10),
-    new THREE.MeshStandardMaterial({ color: config.backgroundColor })
-  );
-  backdrop.position.z = -2;
-  scene.add(backdrop);
+  // Skydome – degradado vertical (topColor → bottomColor)
+  const skyGeo = new THREE.SphereGeometry(80, 32, 15);
+  const skyMat = new THREE.ShaderMaterial({
+    uniforms: {
+      topColor:    { value: new THREE.Color(0x0077ff) },
+      bottomColor: { value: new THREE.Color(config.backgroundColor) },
+      offset:      { value: 5 },
+      exponent:    { value: 0.6 }
+    },
+    vertexShader: `
+      varying vec3 vWorldPosition;
+      void main() {
+        vec4 worldPosition = modelMatrix * vec4(position, 1.0);
+        vWorldPosition = worldPosition.xyz;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: `
+      uniform vec3 topColor;
+      uniform vec3 bottomColor;
+      uniform float offset;
+      uniform float exponent;
+      varying vec3 vWorldPosition;
+      void main() {
+        float h = normalize(vWorldPosition + offset).y;
+        gl_FragColor = vec4(mix(bottomColor, topColor, max(pow(max(h, 0.0), exponent), 0.0)), 1.0);
+      }
+    `,
+    side: THREE.BackSide
+  });
+  const sky = new THREE.Mesh(skyGeo, skyMat);
+  scene.add(sky);
+
+  // Sincronizar fog con el color inferior del cielo
+  scene.fog.color.copy(skyMat.uniforms.bottomColor.value);
 
   const ambient = new THREE.AmbientLight(0xffffff, 0.05);
   scene.add(ambient);
   const fill = new THREE.DirectionalLight(0xffffff, 0.2);
   fill.position.set(3, 3, 3);
+  fill.castShadow = true;
+  fill.shadow.camera.near = 0.5;
+  fill.shadow.camera.far = 15;
+  fill.shadow.camera.left = -5;
+  fill.shadow.camera.right = 5;
+  fill.shadow.camera.top = 5;
+  fill.shadow.camera.bottom = -5;
+  fill.shadow.mapSize.width = 1024;
+  fill.shadow.mapSize.height = 1024;
   scene.add(fill);
   
   // PointLight: color, intensity, distance (0=infinito), decay (1=lineal, 2=físico)
@@ -94,6 +133,15 @@ export function initThree(canvas, options = {}, dotNetRef = null) {
   const accent = new THREE.PointLight(config.accentColor, config.accentIntensity, 0, 1);
   accent.position.set(0, 1.3, 2.5);
   scene.add(accent);
+
+  // Suelo
+  const groundGeo = new THREE.PlaneGeometry(20, 20);
+  const groundMat = new THREE.MeshStandardMaterial({ color: 0xa0adaf, roughness: 0.9 });
+  const ground = new THREE.Mesh(groundGeo, groundMat);
+  ground.rotation.x = -Math.PI / 2;
+  ground.position.y = 0;
+  ground.receiveShadow = true;
+  scene.add(ground);
 
   const sourceText = config.text;
   const { textOnly, emojis } = splitTextAndEmoji(sourceText);
@@ -129,6 +177,7 @@ export function initThree(canvas, options = {}, dotNetRef = null) {
 
     const mesh = new THREE.Mesh(geometry, material);
     mesh.position.set(offsetX, 1 + offsetY, 0);
+    mesh.castShadow = true;
     scene.add(mesh);
     current.textMesh = mesh;
 
@@ -204,7 +253,8 @@ export function initThree(canvas, options = {}, dotNetRef = null) {
     animationId,
     instanceId: currentInstanceId,
     accent,
-    backdrop,
+    sky,
+    skyMat,
     textMesh: null,
     dotNetRef,
     onControlsChange
@@ -236,7 +286,7 @@ export function updateConfig(options = {}) {
 
   // Actualizar fondo y fog
   if (backgroundColor !== null) {
-    if (current.backdrop) current.backdrop.material.color.setHex(backgroundColor);
+    if (current.skyMat) current.skyMat.uniforms.bottomColor.value.setHex(backgroundColor);
     if (current.scene && current.scene.fog) current.scene.fog.color.setHex(backgroundColor);
   }
 
