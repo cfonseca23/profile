@@ -198,8 +198,8 @@
     private bool isOpen = false;
     private Config cfg = new();
     private string lastText = "CV 3D";
-    private double lastTextSize = 1.5;
-    private double lastTextDepth = 0.05;
+    private double lastTextSize = 0.5;
+    private double lastTextDepth = 0.1;
 
     private static string Inv(double v, string fmt = "G") =>
         v.ToString(fmt, CultureInfo.InvariantCulture);
@@ -212,8 +212,8 @@
     private class Config
     {
         public string Text { get; set; } = "CV 3D";
-        public double TextSize { get; set; } = 1.5;
-        public double TextDepth { get; set; } = 0.05;
+        public double TextSize { get; set; } = 0.5;
+        public double TextDepth { get; set; } = 0.1;
         public int TextColor { get; set; } = 0x111111;
         public int EmissiveColor { get; set; } = 0x00ffff;
         public double EmissiveIntensity { get; set; } = 0.2;

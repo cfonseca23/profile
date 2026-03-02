@@ -12,6 +12,28 @@
         "/consoleloggerparameters:NoSummary;ForceNoAlign"
       ],
       "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "cleanup-dotnet",
+      "type": "shell",
+      "presentation": {
+        "echo": true,
+        "reveal": "silent",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": false,
+        "clear": false
+      },
+      "windows": {
+        "command": "Get-Process -Name dotnet -ErrorAction SilentlyContinue | Where-Object { $_.CommandLine -like '*blazor-devserver*' -or $_.CommandLine -like '*Profile.dll*' } | Stop-Process -Force -ErrorAction SilentlyContinue; Get-NetTCPConnection -LocalPort 7181 -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }"
+      },
+      "osx": {
+        "command": "pkill -9 -f 'blazor-devserver|Profile.dll' 2>/dev/null || true; lsof -ti :7181 2>/dev/null | xargs kill -9 2>/dev/null || true"
+      },
+      "linux": {
+        "command": "pkill -9 -f 'blazor-devserver|Profile.dll' 2>/dev/null || true; lsof -ti :7181 2>/dev/null | xargs kill -9 2>/dev/null || true"
+      },
+      "problemMatcher": []
     }
   ]
 }
