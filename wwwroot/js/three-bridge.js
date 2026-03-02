@@ -31,12 +31,12 @@ const DEFAULT_CONFIG = {
   textColor: 0x111111,
   emissiveColor: 0x00ffff,
   emissiveIntensity: 0.2,
-  backgroundColor: 0x050505,
+  backgroundColor: 0x9021C0,
   fogNear: 15,
   fogFar: 35,
   cameraZ: 2.1,
   cameraY: 1.0,
-  accentColor: 0x00ffff,
+  accentColor: 0xD55F10,
   accentIntensity: 10
 };
 
