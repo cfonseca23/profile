@@ -1,1 +1,26 @@
-{}
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "dotnet: run",
+      "type": "process",
+      "command": "dotnet",
+      "args": [
+        "run",
+        "--project",
+        "${workspaceFolder}/Profile.csproj",
+        "--launch-profile",
+        "https"
+      ],
+      "isBackground": true,
+      "problemMatcher": {
+        "base": "$msCompile",
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^.*$",
+          "endsPattern": "Now listening on:\\s+https://localhost:7181"
+        }
+      }
+    }
+  ]
+}
