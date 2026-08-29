@@ -25,5 +25,6 @@
         "statusBar.debuggingBackground": "#42b883",
         "statusBar.debuggingForeground": "#15202b"
     },
-    "peacock.color": "#42b883"
+    "peacock.color": "#42b883",
+    "git.pullRebase": false
 }
