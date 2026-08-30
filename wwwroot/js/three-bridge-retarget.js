@@ -17,8 +17,13 @@ const DEFAULT_CONFIG = {
   targetUrl: "models/gltf/Soldier.glb",
   showHelpers: false,
   reflectorOpacity: 0.2,
+  cameraX: 0,
+  cameraY: 1,
   cameraZ: 4,
-  cameraY: 1
+  targetX: 0,
+  targetY: 1,
+  targetZ: 0,
+  fov: 40
 };
 
 const SOURCE_MODELS = {
@@ -166,15 +171,19 @@ function notifyConfigChanged() {
 
   const cfg = current.config;
 
-  current.dotNetRef.invokeMethodAsync(
-    "OnConfigChanged",
-    cfg.sourceUrl,
-    cfg.targetUrl,
-    !!cfg.showHelpers,
-    Number(cfg.reflectorOpacity ?? 0),
-    Number(cfg.cameraY ?? 0),
-    Number(cfg.cameraZ ?? 0)
-  ).catch(() => {});
+  current.dotNetRef.invokeMethodAsync("OnConfigChanged", {
+    sourceUrl: cfg.sourceUrl,
+    targetUrl: cfg.targetUrl,
+    showHelpers: !!cfg.showHelpers,
+    reflectorOpacity: Number(cfg.reflectorOpacity ?? 0),
+    cameraX: Number(cfg.cameraX ?? 0),
+    cameraY: Number(cfg.cameraY ?? 0),
+    cameraZ: Number(cfg.cameraZ ?? 0),
+    targetX: Number(cfg.targetX ?? 0),
+    targetY: Number(cfg.targetY ?? 0),
+    targetZ: Number(cfg.targetZ ?? 0),
+    fov: Number(cfg.fov ?? 0)
+  }).catch(() => {});
 }
 
 function setupNativeInspectorControls() {
@@ -199,19 +208,33 @@ function setupNativeInspectorControls() {
     })
     .listen();
 
-  live.add(current.config, "cameraZ", 3, 12, 0.5)
-    .name("Camara Z")
-    .onChange((value) => {
-      updateConfig({ cameraZ: value });
-    })
-    .listen();
+  live.add(current.config, "cameraX", -30, 30, 0.05)
+    .name("Camara X")
+    .onChange((value) => updateConfig({ cameraX: value }));
 
-  live.add(current.config, "cameraY", 0, 5, 0.1)
+  live.add(current.config, "cameraY", -30, 30, 0.05)
     .name("Camara Y")
-    .onChange((value) => {
-      updateConfig({ cameraY: value });
-    })
-    .listen();
+    .onChange((value) => updateConfig({ cameraY: value }));
+
+  live.add(current.config, "cameraZ", -30, 30, 0.05)
+    .name("Camara Z")
+    .onChange((value) => updateConfig({ cameraZ: value }));
+
+  live.add(current.config, "targetX", -30, 30, 0.05)
+    .name("Target X")
+    .onChange((value) => updateConfig({ targetX: value }));
+
+  live.add(current.config, "targetY", -30, 30, 0.05)
+    .name("Target Y")
+    .onChange((value) => updateConfig({ targetY: value }));
+
+  live.add(current.config, "targetZ", -30, 30, 0.05)
+    .name("Target Z")
+    .onChange((value) => updateConfig({ targetZ: value }));
+
+  live.add(current.config, "fov", 10, 150, 1)
+    .name("FOV")
+    .onChange((value) => updateConfig({ fov: value }));
 
   const models = params.addFolder("Modelos");
 
@@ -271,8 +294,8 @@ export async function initThree(canvas, options = {}, dotNetRef = null) {
   scene.add(dirLight);
 
   const { width, height } = getCanvasSize(canvas);
-  const camera = new THREE.PerspectiveCamera(40, width / height, 0.25, 50);
-  camera.position.set(0, config.cameraY, config.cameraZ);
+  const camera = new THREE.PerspectiveCamera(config.fov, width / height, 0.25, 50);
+  camera.position.set(config.cameraX, config.cameraY, config.cameraZ);
 
   const renderer = new THREE.WebGPURenderer({ canvas, antialias: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
@@ -289,10 +312,11 @@ export async function initThree(canvas, options = {}, dotNetRef = null) {
   }
 
   const controls = new OrbitControls(camera, renderer.domElement);
-  controls.minDistance = 3;
-  controls.maxDistance = 12;
-  controls.target.set(0, 1, 0);
-  controls.maxPolarAngle = Math.PI / 2;
+  controls.minDistance = 0.5;
+  controls.maxDistance = 100;
+  controls.minPolarAngle = 0.05;
+  controls.maxPolarAngle = Math.PI - 0.05;
+  controls.target.set(config.targetX, config.targetY, config.targetZ);
 
   const timer = new THREE.Timer();
   timer.connect(document);
@@ -389,9 +413,18 @@ export function updateConfig(options = {}) {
   }
 
   let cameraChanged = false;
-  if (typeof options.cameraZ === "number") { current.camera.position.z = options.cameraZ; cameraChanged = true; }
+  if (typeof options.cameraX === "number") { current.camera.position.x = options.cameraX; cameraChanged = true; }
   if (typeof options.cameraY === "number") { current.camera.position.y = options.cameraY; cameraChanged = true; }
+  if (typeof options.cameraZ === "number") { current.camera.position.z = options.cameraZ; cameraChanged = true; }
+  if (typeof options.targetX === "number") { current.controls.target.x = options.targetX; cameraChanged = true; }
+  if (typeof options.targetY === "number") { current.controls.target.y = options.targetY; cameraChanged = true; }
+  if (typeof options.targetZ === "number") { current.controls.target.z = options.targetZ; cameraChanged = true; }
   if (cameraChanged) current.controls.update();
+
+  if (typeof options.fov === "number") {
+    current.camera.fov = options.fov;
+    current.camera.updateProjectionMatrix();
+  }
 
   notifyConfigChanged();
 }

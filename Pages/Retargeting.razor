@@ -16,8 +16,9 @@
         <div>Destino: @cfg.TargetUrl</div>
         <div>Helpers: @(cfg.ShowHelpers ? "ON" : "OFF")</div>
         <div>Opacidad suelo: @cfg.ReflectorOpacity.ToString("F2", CultureInfo.InvariantCulture)</div>
-        <div>Cámara Y: @cfg.CameraY.ToString("F2", CultureInfo.InvariantCulture)</div>
-        <div>Cámara Z: @cfg.CameraZ.ToString("F2", CultureInfo.InvariantCulture)</div>
+        <div>Cámara X/Y/Z: @cfg.CameraX.ToString("F2", CultureInfo.InvariantCulture) / @cfg.CameraY.ToString("F2", CultureInfo.InvariantCulture) / @cfg.CameraZ.ToString("F2", CultureInfo.InvariantCulture)</div>
+        <div>Target X/Y/Z: @cfg.TargetX.ToString("F2", CultureInfo.InvariantCulture) / @cfg.TargetY.ToString("F2", CultureInfo.InvariantCulture) / @cfg.TargetZ.ToString("F2", CultureInfo.InvariantCulture)</div>
+        <div>FOV: @cfg.Fov.ToString("F0", CultureInfo.InvariantCulture)</div>
     </div>
 
     @if (loadError is not null)
@@ -103,8 +104,28 @@
         public string TargetUrl { get; set; } = "models/gltf/Soldier.glb";
         public bool ShowHelpers { get; set; }
         public double ReflectorOpacity { get; set; } = 0.2;
-        public double CameraZ { get; set; } = 4;
+        public double CameraX { get; set; }
         public double CameraY { get; set; } = 1;
+        public double CameraZ { get; set; } = 4;
+        public double TargetX { get; set; }
+        public double TargetY { get; set; } = 1;
+        public double TargetZ { get; set; }
+        public double Fov { get; set; } = 40;
+    }
+
+    public class ConfigDto
+    {
+        public string SourceUrl { get; set; } = "";
+        public string TargetUrl { get; set; } = "";
+        public bool ShowHelpers { get; set; }
+        public double ReflectorOpacity { get; set; }
+        public double CameraX { get; set; }
+        public double CameraY { get; set; }
+        public double CameraZ { get; set; }
+        public double TargetX { get; set; }
+        public double TargetY { get; set; }
+        public double TargetZ { get; set; }
+        public double Fov { get; set; }
     }
 
     private ElementReference canvasRef;
@@ -133,26 +154,30 @@
             targetUrl = cfg.TargetUrl,
             showHelpers = cfg.ShowHelpers,
             reflectorOpacity = cfg.ReflectorOpacity,
+            cameraX = cfg.CameraX,
+            cameraY = cfg.CameraY,
             cameraZ = cfg.CameraZ,
-            cameraY = cfg.CameraY
+            targetX = cfg.TargetX,
+            targetY = cfg.TargetY,
+            targetZ = cfg.TargetZ,
+            fov = cfg.Fov
         }, dotNetRef);
     }
 
     [JSInvokable]
-    public Task OnConfigChanged(
-        string sourceUrl,
-        string targetUrl,
-        bool showHelpers,
-        double reflectorOpacity,
-        double cameraY,
-        double cameraZ)
+    public Task OnConfigChanged(ConfigDto dto)
     {
-        cfg.SourceUrl = sourceUrl;
-        cfg.TargetUrl = targetUrl;
-        cfg.ShowHelpers = showHelpers;
-        cfg.ReflectorOpacity = reflectorOpacity;
-        cfg.CameraY = cameraY;
-        cfg.CameraZ = cameraZ;
+        cfg.SourceUrl = dto.SourceUrl;
+        cfg.TargetUrl = dto.TargetUrl;
+        cfg.ShowHelpers = dto.ShowHelpers;
+        cfg.ReflectorOpacity = dto.ReflectorOpacity;
+        cfg.CameraX = dto.CameraX;
+        cfg.CameraY = dto.CameraY;
+        cfg.CameraZ = dto.CameraZ;
+        cfg.TargetX = dto.TargetX;
+        cfg.TargetY = dto.TargetY;
+        cfg.TargetZ = dto.TargetZ;
+        cfg.Fov = dto.Fov;
         return InvokeAsync(StateHasChanged);
     }
 

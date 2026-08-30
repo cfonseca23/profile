@@ -6,7 +6,6 @@
       "type": "dotnet",
       "request": "launch",
       "projectPath": "${workspaceFolder}/Profile.csproj",
-      "launchSettingsProfile": "https",
       "preLaunchTask": "Profile: limpiar y compilar HTTPS",
       "postDebugTask": "Profile: limpiar HTTPS"
     }
