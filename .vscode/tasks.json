@@ -11,6 +11,15 @@
       "problemMatcher": []
     },
     {
+      "label": "Profile: compilar HTTPS",
+      "type": "shell",
+      "command": "dotnet build \"${workspaceFolder}/Profile.csproj\"",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
       "label": "Profile: limpiar y compilar HTTPS",
       "type": "shell",
       "command": "bash \"${workspaceFolder}/cleanup-dotnet.sh\" && dotnet build \"${workspaceFolder}/Profile.csproj\"",
@@ -18,6 +27,15 @@
         "cwd": "${workspaceFolder}"
       },
       "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Profile: prelaunch HTTPS",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "Profile: limpiar HTTPS",
+        "Profile: compilar HTTPS"
+      ],
+      "problemMatcher": []
     }
   ]
 }
