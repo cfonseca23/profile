@@ -2,30 +2,13 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Profile (.NET / C# Dev Kit)",
+      "name": "Profile: depurar HTTPS",
       "type": "dotnet",
       "request": "launch",
-      "projectPath": "${workspaceFolder}/Profile.csproj"
-    },
-    {
-      "name": "Blazor WebAssembly (navegador por defecto del sistema)",
-      "type": "blazorwasm",
-      "request": "launch",
-      "preLaunchTask": "build"
-    },
-    {
-      "name": "Blazor WebAssembly (Chrome)",
-      "type": "blazorwasm",
-      "request": "launch",
-      "browser": "chrome",
-      "preLaunchTask": "build"
-    },
-    {
-      "name": "Blazor WebAssembly (Edge)",
-      "type": "blazorwasm",
-      "request": "launch",
-      "browser": "edge",
-      "preLaunchTask": "build"
+      "projectPath": "${workspaceFolder}/Profile.csproj",
+      "launchSettingsProfile": "https",
+      "preLaunchTask": "Profile: limpiar y compilar HTTPS",
+      "postDebugTask": "Profile: limpiar HTTPS"
     }
   ]
 }

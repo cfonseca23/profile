@@ -2,33 +2,22 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "build",
-      "command": "dotnet",
-      "type": "process",
-      "args": [
-        "build",
-        "${workspaceFolder}/Profile.csproj",
-        "/property:GenerateFullPaths=true",
-        "/consoleloggerparameters:NoSummary"
-      ],
-      "problemMatcher": "$msCompile",
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      }
-    },
-    {
-      "label": "cleanup-dotnet",
+      "label": "Profile: limpiar HTTPS",
       "type": "shell",
-      "command": "./cleanup-dotnet.sh",
-      "windows": {
-        "command": "powershell -ExecutionPolicy Bypass -File .\\cleanup-dotnet.ps1"
-      },
-      "presentation": {
-        "reveal": "silent",
-        "close": true
+      "command": "bash \"${workspaceFolder}/cleanup-dotnet.sh\"",
+      "options": {
+        "cwd": "${workspaceFolder}"
       },
       "problemMatcher": []
+    },
+    {
+      "label": "Profile: limpiar y compilar HTTPS",
+      "type": "shell",
+      "command": "bash \"${workspaceFolder}/cleanup-dotnet.sh\" && dotnet build \"${workspaceFolder}/Profile.csproj\"",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": "$msCompile"
     }
   ]
 }
