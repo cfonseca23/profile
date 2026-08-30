@@ -10,54 +10,24 @@
 <div class="canvas-container">
     <canvas @ref="canvasRef"></canvas>
 
+    <div class="live-state-panel">
+        <h6>Estado live (.razor)</h6>
+        <div>Fuente: @cfg.SourceUrl</div>
+        <div>Destino: @cfg.TargetUrl</div>
+        <div>Helpers: @(cfg.ShowHelpers ? "ON" : "OFF")</div>
+        <div>Opacidad suelo: @cfg.ReflectorOpacity.ToString("F2", CultureInfo.InvariantCulture)</div>
+        <div>Cámara Y: @cfg.CameraY.ToString("F2", CultureInfo.InvariantCulture)</div>
+        <div>Cámara Z: @cfg.CameraZ.ToString("F2", CultureInfo.InvariantCulture)</div>
+    </div>
+
     @if (loadError is not null)
     {
         <div class="model-error">
-            No se pudieron cargar los modelos GLB. Revisa @cfg.SourceUrl y @cfg.TargetUrl en wwwroot.
+            No se pudieron cargar los modelos GLB definidos en el inspector de Three.js.
             <br />
             <small>@loadError</small>
         </div>
     }
-
-    <div class="config-panel @(isOpen ? "open" : "")">
-        <button class="config-toggle" @onclick="() => isOpen = !isOpen" title="Configuración">
-            @(isOpen ? "✕" : "⚙")
-        </button>
-
-        @if (isOpen)
-        {
-            <div class="config-body">
-                <h6>Animation Retargeting</h6>
-
-                <label class="checkbox-label">
-                    <input type="checkbox" @bind="cfg.ShowHelpers" @bind:after="ApplyLive" />
-                    Mostrar helpers (esqueletos)
-                </label>
-
-                <label>Opacidad reflejo suelo: @Inv(cfg.ReflectorOpacity, "F2")</label>
-                <input type="range" min="0" max="1" step="0.05" value="@Inv(cfg.ReflectorOpacity)" @oninput="async e => { cfg.ReflectorOpacity = ParseDouble(e.Value, 0.2); await ApplyLive(); }" />
-
-                <label>Cámara Z: @Inv(cfg.CameraZ, "F1")</label>
-                <input type="range" min="3" max="12" step="0.5" value="@Inv(cfg.CameraZ)" @oninput="async e => { cfg.CameraZ = ParseDouble(e.Value, 4); await ApplyLive(); }" />
-
-                <label>Cámara Y: @Inv(cfg.CameraY, "F1")</label>
-                <input type="range" min="0" max="5" step="0.1" value="@Inv(cfg.CameraY)" @oninput="async e => { cfg.CameraY = ParseDouble(e.Value, 1); await ApplyLive(); }" />
-
-                <label>Modelo fuente (animación)</label>
-                <input type="text" @bind="cfg.SourceUrl" @bind:event="oninput" />
-
-                <label>Modelo destino (retarget)</label>
-                <input type="text" @bind="cfg.TargetUrl" @bind:event="oninput" />
-
-                <div class="config-buttons">
-                    <button class="btn-apply" @onclick="ReloadScene">Recargar modelos</button>
-                    <button class="btn-reset" @onclick="ResetConfig">Reset</button>
-                </div>
-
-                <p class="inspector-hint">El panel del Inspector de three.js (perfilado, consola, parámetros) aparece como overlay flotante sobre el canvas.</p>
-            </div>
-        }
-    </div>
 </div>
 
 <style>
@@ -91,149 +61,57 @@
         font-size: 12px;
     }
 
-    .config-panel {
+    .live-state-panel {
         position: absolute;
-        top: 12px;
-        right: 12px;
+        bottom: 12px;
+        left: 12px;
         z-index: 10;
-    }
-
-    .config-toggle {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        border: none;
-        background: rgba(0, 188, 212, 0.85);
-        color: #fff;
-        font-size: 16px;
-        cursor: pointer;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    }
-
-    .config-toggle:hover {
-        background: #00bcd4;
-    }
-
-    .config-panel.open .config-toggle {
-        position: absolute;
-        top: 8px;
-        right: 8px;
-        z-index: 2;
-    }
-
-    .config-body {
-        background: rgba(18, 18, 24, 0.95);
-        border: 1px solid rgba(0, 188, 212, 0.4);
-        border-radius: 10px;
-        padding: 50px 16px 16px;
-        width: 260px;
-        max-height: 70vh;
-        overflow-y: auto;
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.4);
-    }
-
-    .config-body h6 {
-        margin: 0 0 8px;
-        color: #00bcd4;
-        font-size: 14px;
-    }
-
-    .config-body label {
-        color: #aaa;
-        font-size: 11px;
-        margin-top: 4px;
-    }
-
-    .checkbox-label {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        color: #ddd !important;
-        font-size: 12px !important;
-    }
-
-    .config-body input[type="text"] {
-        padding: 6px 8px;
-        border: 1px solid #444;
-        border-radius: 4px;
-        background: #1a1a24;
-        color: #fff;
+        min-width: 260px;
+        max-width: min(520px, calc(100vw - 24px));
+        background: rgba(9, 14, 22, 0.78);
+        border: 1px solid rgba(0, 188, 212, 0.35);
+        color: #d9eef2;
+        border-radius: 8px;
+        padding: 10px 12px;
         font-size: 12px;
+        line-height: 1.45;
+        backdrop-filter: blur(3px);
     }
 
-    .config-body input[type="range"] {
-        width: 100%;
-        accent-color: #00bcd4;
-    }
-
-    .config-buttons {
-        display: flex;
-        gap: 8px;
-        margin-top: 12px;
-    }
-
-    .btn-apply, .btn-reset {
-        flex: 1;
-        padding: 8px;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
+    .live-state-panel h6 {
+        margin: 0 0 6px;
+        color: #6ad9e7;
         font-size: 12px;
+        font-weight: 700;
     }
 
-    .btn-apply {
-        background: #00bcd4;
-        color: #fff;
+    /* El navbar sticky (z-index 1020) tapa el toggle del Inspector (top:15px, z-index 1001) */
+    #profiler-toggle {
+        top: 70px !important;
+        z-index: 1021 !important;
     }
 
-    .btn-reset {
-        background: transparent;
-        border: 1px solid #666;
-        color: #aaa;
+    #profiler-mini-panel {
+        top: 112px !important;
     }
-
-    .btn-apply:hover { background: #00acc1; }
-    .btn-reset:hover { border-color: #888; color: #fff; }
-
-    .inspector-hint {
-        margin-top: 10px;
-        font-size: 10px !important;
-        color: #777 !important;
-        line-height: 1.4;
-    }
-
-    .config-body::-webkit-scrollbar { width: 5px; }
-    .config-body::-webkit-scrollbar-thumb { background: #00bcd4; border-radius: 3px; }
 </style>
 
 @code {
-    private ElementReference canvasRef;
-    private IJSObjectReference? module;
-    private DotNetObjectReference<Retargeting>? dotNetRef;
-    private bool isOpen = false;
-    private string? loadError;
-    private Config cfg = new();
-
-    private static string Inv(double v, string fmt = "G") =>
-        v.ToString(fmt, CultureInfo.InvariantCulture);
-
-    private static double ParseDouble(object? value, double fallback) =>
-        double.TryParse(value?.ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out var result)
-            ? result : fallback;
-
-    // Valores idénticos a DEFAULT_CONFIG en three-bridge-retarget.js
     private class Config
     {
         public string SourceUrl { get; set; } = "models/gltf/Michelle.glb";
         public string TargetUrl { get; set; } = "models/gltf/Soldier.glb";
-        public bool ShowHelpers { get; set; } = false;
+        public bool ShowHelpers { get; set; }
         public double ReflectorOpacity { get; set; } = 0.2;
         public double CameraZ { get; set; } = 4;
         public double CameraY { get; set; } = 1;
     }
+
+    private ElementReference canvasRef;
+    private IJSObjectReference? module;
+    private DotNetObjectReference<Retargeting>? dotNetRef;
+    private string? loadError;
+    private Config cfg = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -260,31 +138,22 @@
         }, dotNetRef);
     }
 
-    private async Task ApplyLive()
+    [JSInvokable]
+    public Task OnConfigChanged(
+        string sourceUrl,
+        string targetUrl,
+        bool showHelpers,
+        double reflectorOpacity,
+        double cameraY,
+        double cameraZ)
     {
-        if (module is null) return;
-        await module.InvokeVoidAsync("updateConfig", new
-        {
-            showHelpers = cfg.ShowHelpers,
-            reflectorOpacity = cfg.ReflectorOpacity,
-            cameraZ = cfg.CameraZ,
-            cameraY = cfg.CameraY
-        });
-    }
-
-    private async Task ReloadScene()
-    {
-        if (module is null) return;
-        await module.InvokeVoidAsync("disposeThree");
-        await Task.Delay(50);
-        await InitScene();
-    }
-
-    private async Task ResetConfig()
-    {
-        cfg = new Config();
-        StateHasChanged();
-        await ReloadScene();
+        cfg.SourceUrl = sourceUrl;
+        cfg.TargetUrl = targetUrl;
+        cfg.ShowHelpers = showHelpers;
+        cfg.ReflectorOpacity = reflectorOpacity;
+        cfg.CameraY = cameraY;
+        cfg.CameraZ = cameraZ;
+        return InvokeAsync(StateHasChanged);
     }
 
     [JSInvokable]

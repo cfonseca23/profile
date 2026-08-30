@@ -21,6 +21,14 @@ const DEFAULT_CONFIG = {
   cameraY: 1
 };
 
+const SOURCE_MODELS = {
+  "Michelle.glb": "models/gltf/Michelle.glb"
+};
+
+const TARGET_MODELS = {
+  "Soldier.glb": "models/gltf/Soldier.glb"
+};
+
 // Puerto directo del shader "lightSpeed" del ejemplo three.js webgpu_animation_retargeting
 const lightSpeed = /*@__PURE__*/ Fn(([suvImmutable]) => {
   const suv = vec2(suvImmutable);
@@ -145,6 +153,97 @@ function retargetModel(sourceRig, targetModel, helpers) {
   return mixer;
 }
 
+async function reloadSceneFromInspector() {
+  if (!current) return;
+  const nextConfig = { ...current.config };
+  const canvas = current.canvas;
+  const dotNetRef = current.dotNetRef;
+  await initThree(canvas, nextConfig, dotNetRef);
+}
+
+function notifyConfigChanged() {
+  if (!current?.dotNetRef) return;
+
+  const cfg = current.config;
+
+  current.dotNetRef.invokeMethodAsync(
+    "OnConfigChanged",
+    cfg.sourceUrl,
+    cfg.targetUrl,
+    !!cfg.showHelpers,
+    Number(cfg.reflectorOpacity ?? 0),
+    Number(cfg.cameraY ?? 0),
+    Number(cfg.cameraZ ?? 0)
+  ).catch(() => {});
+}
+
+function setupNativeInspectorControls() {
+  if (!current?.renderer?.inspector || typeof current.renderer.inspector.createParameters !== "function") {
+    return;
+  }
+
+  const params = current.renderer.inspector.createParameters("Retargeting");
+  const live = params.addFolder("Live");
+
+  live.add(current.config, "showHelpers")
+    .name("Mostrar helpers")
+    .onChange((value) => {
+      updateConfig({ showHelpers: value });
+    })
+    .listen();
+
+  live.add(current.config, "reflectorOpacity", 0, 1, 0.05)
+    .name("Opacidad suelo")
+    .onChange((value) => {
+      updateConfig({ reflectorOpacity: value });
+    })
+    .listen();
+
+  live.add(current.config, "cameraZ", 3, 12, 0.5)
+    .name("Camara Z")
+    .onChange((value) => {
+      updateConfig({ cameraZ: value });
+    })
+    .listen();
+
+  live.add(current.config, "cameraY", 0, 5, 0.1)
+    .name("Camara Y")
+    .onChange((value) => {
+      updateConfig({ cameraY: value });
+    })
+    .listen();
+
+  const models = params.addFolder("Modelos");
+
+  models.add(current.config, "sourceUrl", SOURCE_MODELS)
+    .name("Fuente")
+    .onChange(() => {
+      notifyConfigChanged();
+      reloadSceneFromInspector();
+    })
+    .listen();
+
+  models.add(current.config, "targetUrl", TARGET_MODELS)
+    .name("Destino")
+    .onChange(() => {
+      notifyConfigChanged();
+      reloadSceneFromInspector();
+    })
+    .listen();
+
+  const actions = {
+    recargar: () => reloadSceneFromInspector(),
+    reset: () => {
+      current.config = { ...DEFAULT_CONFIG };
+      notifyConfigChanged();
+      return reloadSceneFromInspector();
+    }
+  };
+
+  models.add(actions, "recargar").name("Recargar modelos");
+  models.add(actions, "reset").name("Reset");
+}
+
 export async function initThree(canvas, options = {}, dotNetRef = null) {
   disposeThree();
 
@@ -182,6 +281,9 @@ export async function initThree(canvas, options = {}, dotNetRef = null) {
 
   try {
     renderer.inspector = new Inspector();
+    if (!renderer.inspector.domElement.parentElement) {
+      document.body.appendChild(renderer.inspector.domElement);
+    }
   } catch (err) {
     console.warn("Inspector no disponible en este entorno:", err);
   }
@@ -218,8 +320,17 @@ export async function initThree(canvas, options = {}, dotNetRef = null) {
 
   current = {
     renderer, scene, camera, controls, helpers, timer, floorMaterial,
-    onResize, instanceId: currentInstanceId, source: null, mixer: null
+    onResize,
+    instanceId: currentInstanceId,
+    source: null,
+    mixer: null,
+    canvas,
+    dotNetRef,
+    config
   };
+
+  setupNativeInspectorControls();
+  notifyConfigChanged();
 
   function animate() {
     if (currentInstanceId !== instanceId) return;
@@ -267,6 +378,8 @@ export async function initThree(canvas, options = {}, dotNetRef = null) {
 export function updateConfig(options = {}) {
   if (!current) return;
 
+  Object.assign(current.config, options);
+
   if (typeof options.showHelpers === "boolean") {
     current.helpers.visible = options.showHelpers;
   }
@@ -279,6 +392,8 @@ export function updateConfig(options = {}) {
   if (typeof options.cameraZ === "number") { current.camera.position.z = options.cameraZ; cameraChanged = true; }
   if (typeof options.cameraY === "number") { current.camera.position.y = options.cameraY; cameraChanged = true; }
   if (cameraChanged) current.controls.update();
+
+  notifyConfigChanged();
 }
 
 export function disposeThree() {
@@ -302,5 +417,11 @@ export function disposeThree() {
   });
 
   current.renderer.dispose();
+
+  const inspectorShell = document.getElementById("profiler-shell");
+  if (inspectorShell) {
+    inspectorShell.remove();
+  }
+
   current = null;
 }
