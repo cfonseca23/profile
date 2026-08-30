@@ -8,8 +8,8 @@ echo "🔍 Buscando procesos dotnet relacionados con la aplicación Profile..."
 # Encontrar procesos blazor-devserver
 BLAZOR_PIDS=$(ps aux | grep "blazor-devserver" | grep -v grep | awk '{print $2}')
 
-# Encontrar procesos dotnet run en el puerto 7181
-PORT_PIDS=$(lsof -ti :7181 2>/dev/null)
+# Encontrar procesos dotnet run en los puertos 7181 y 5181
+PORT_PIDS=$(lsof -ti :7181 -ti :5181 2>/dev/null)
 
 # Encontrar procesos dotnet que estén ejecutando Profile.dll
 PROFILE_PIDS=$(ps aux | grep "Profile.dll" | grep -v grep | awk '{print $2}')

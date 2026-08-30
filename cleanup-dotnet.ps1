@@ -7,8 +7,8 @@ Write-Host "🔍 Buscando procesos dotnet relacionados con la aplicación Profil
 $blazorProcesses = Get-Process -Name "dotnet" -ErrorAction SilentlyContinue | 
     Where-Object { $_.CommandLine -like "*blazor-devserver*" }
 
-# Encontrar procesos usando el puerto 7181
-$portProcesses = Get-NetTCPConnection -LocalPort 7181 -ErrorAction SilentlyContinue | 
+# Encontrar procesos usando los puertos 7181 y 5181
+$portProcesses = Get-NetTCPConnection -LocalPort 7181, 5181 -ErrorAction SilentlyContinue | 
     Select-Object -ExpandProperty OwningProcess | 
     ForEach-Object { Get-Process -Id $_ -ErrorAction SilentlyContinue }
 

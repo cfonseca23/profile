@@ -2,13 +2,34 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Blazor WebAssembly",
+      "name": "Blazor WebAssembly (seleccionar navegador)",
       "type": "blazorwasm",
       "request": "launch",
       "url": "https://localhost:7181",
       "webRoot": "${workspaceFolder}/wwwroot",
-      "browser": "edge",
+      "browser": "${input:blazorBrowser}",
       "preLaunchTask": "dotnet: run"
+    },
+    {
+      "name": "Blazor WebAssembly (navegador por defecto del sistema)",
+      "type": "blazorwasm",
+      "request": "launch",
+      "url": "https://localhost:7181",
+      "webRoot": "${workspaceFolder}/wwwroot",
+      "preLaunchTask": "dotnet: run"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "blazorBrowser",
+      "type": "pickString",
+      "description": "Selecciona navegador para depurar",
+      "options": [
+        "edge",
+        "chrome",
+        "firefox"
+      ],
+      "default": "edge"
     }
   ]
 }
