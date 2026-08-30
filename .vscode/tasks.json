@@ -2,25 +2,33 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "dotnet: run",
-      "type": "process",
+      "label": "build",
       "command": "dotnet",
+      "type": "process",
       "args": [
-        "run",
-        "--project",
+        "build",
         "${workspaceFolder}/Profile.csproj",
-        "--launch-profile",
-        "https"
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
       ],
-      "isBackground": true,
-      "problemMatcher": {
-        "base": "$msCompile",
-        "background": {
-          "activeOnStart": true,
-          "beginsPattern": "^.*$",
-          "endsPattern": "Now listening on:\\s+https://localhost:7181"
-        }
+      "problemMatcher": "$msCompile",
+      "group": {
+        "kind": "build",
+        "isDefault": true
       }
+    },
+    {
+      "label": "cleanup-dotnet",
+      "type": "shell",
+      "command": "./cleanup-dotnet.sh",
+      "windows": {
+        "command": "powershell -ExecutionPolicy Bypass -File .\\cleanup-dotnet.ps1"
+      },
+      "presentation": {
+        "reveal": "silent",
+        "close": true
+      },
+      "problemMatcher": []
     }
   ]
 }
