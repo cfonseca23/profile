@@ -42,6 +42,12 @@
         <Copy SourceFiles="$(_ThreeObjDir)\node_modules\three\build\three.core.js"
           DestinationFiles="$(ThreeJsWwwrootDir)\three.core.js" />
 
+        <Copy SourceFiles="$(_ThreeObjDir)\node_modules\three\build\three.webgpu.js"
+          DestinationFiles="$(ThreeJsWwwrootDir)\three.webgpu.js" />
+
+        <Copy SourceFiles="$(_ThreeObjDir)\node_modules\three\build\three.tsl.js"
+          DestinationFiles="$(ThreeJsWwwrootDir)\three.tsl.js" />
+
     <ItemGroup>
       <_ThreeAddons Include="$(_ThreeObjDir)\node_modules\three\examples\jsm\**\*.*" />
     </ItemGroup>

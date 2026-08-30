@@ -5,9 +5,17 @@
         <small>&copy; @DateTime.Now.Year Cristhian Fonseca</small>
         <span class="d-none d-sm-inline">•</span>
         <a href="" class="link-light text-decoration-none small" @onclick="GoHome" @onclick:preventDefault="true">Ir a Home</a>
+        <span class="d-none d-sm-inline">•</span>
+        <NavLink class="link-light text-decoration-none small" href="3d">3D</NavLink>
+        <span class="d-none d-sm-inline">•</span>
+        <NavLink class="link-light text-decoration-none small" href="3d-retargeting">Retargeting</NavLink>
+        <span class="d-none d-sm-inline">•</span>
+        <NavLink class="link-light text-decoration-none small" href="love3d">❤️</NavLink>
     </div>
 </footer>
 
 @code {
     private void GoHome() => Navigation.NavigateTo("");
 }
+
+
