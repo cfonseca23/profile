@@ -52,7 +52,19 @@
                 
                 <label>Cámara Y: @Inv(cfg.CameraY, "F1")</label>
                 <input type="range" min="0" max="5" step="0.1" value="@Inv(cfg.CameraY)" @oninput="e => cfg.CameraY = ParseDouble(e.Value, 1.5)" />
-                
+
+                <label>Intensidad bloom: @Inv(cfg.BloomStrength, "F2")</label>
+                <input type="range" min="0" max="2.5" step="0.05" value="@Inv(cfg.BloomStrength)" @oninput="e => cfg.BloomStrength = ParseDouble(e.Value, 0.85)" />
+
+                <label>Radio bloom: @Inv(cfg.BloomRadius, "F2")</label>
+                <input type="range" min="0" max="1" step="0.05" value="@Inv(cfg.BloomRadius)" @oninput="e => cfg.BloomRadius = ParseDouble(e.Value, 0.4)" />
+
+                <label>Umbral bloom: @Inv(cfg.BloomThreshold, "F2")</label>
+                <input type="range" min="0" max="1" step="0.05" value="@Inv(cfg.BloomThreshold)" @oninput="e => cfg.BloomThreshold = ParseDouble(e.Value, 0.15)" />
+
+                <label>Sombra en suelo: @Inv(cfg.GroundShadowOpacity, "F2")</label>
+                <input type="range" min="0" max="1" step="0.05" value="@Inv(cfg.GroundShadowOpacity)" @oninput="e => cfg.GroundShadowOpacity = ParseDouble(e.Value, 0.35)" />
+
                 <div class="config-buttons">
                     <button class="btn-apply" @onclick="ApplyConfig">Aplicar</button>
                     <button class="btn-reset" @onclick="ResetConfig">Reset</button>
@@ -222,6 +234,10 @@
         public double AccentIntensity { get; set; } = 10;
         public double CameraZ { get; set; } = 2.1;
         public double CameraY { get; set; } = 1.0;
+        public double BloomStrength { get; set; } = 0.85;
+        public double BloomRadius { get; set; } = 0.4;
+        public double BloomThreshold { get; set; } = 0.15;
+        public double GroundShadowOpacity { get; set; } = 0.35;
 
         public string TextColorHex
         {
@@ -273,7 +289,11 @@
             accentColor = cfg.AccentColor,
             accentIntensity = cfg.AccentIntensity,
             cameraZ = cfg.CameraZ,
-            cameraY = cfg.CameraY
+            cameraY = cfg.CameraY,
+            bloomStrength = cfg.BloomStrength,
+            bloomRadius = cfg.BloomRadius,
+            bloomThreshold = cfg.BloomThreshold,
+            groundShadowOpacity = cfg.GroundShadowOpacity
         }, dotNetRef);
         SaveGeometryState();
     }
@@ -320,7 +340,11 @@
                 accentColor = cfg.AccentColor,
                 accentIntensity = cfg.AccentIntensity,
                 cameraZ = cfg.CameraZ,
-                cameraY = cfg.CameraY
+                cameraY = cfg.CameraY,
+                bloomStrength = cfg.BloomStrength,
+                bloomRadius = cfg.BloomRadius,
+                bloomThreshold = cfg.BloomThreshold,
+                groundShadowOpacity = cfg.GroundShadowOpacity
             });
         }
     }

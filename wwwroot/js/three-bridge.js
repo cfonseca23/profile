@@ -2,6 +2,11 @@ import * as THREE from "../lib/three/three.module.js";
 import { OrbitControls } from "../lib/three/addons/controls/OrbitControls.js";
 import { FontLoader } from "../lib/three/addons/loaders/FontLoader.js";
 import { TextGeometry } from "../lib/three/addons/geometries/TextGeometry.js";
+import { Reflector } from "../lib/three/addons/objects/Reflector.js";
+import { EffectComposer } from "../lib/three/addons/postprocessing/EffectComposer.js";
+import { RenderPass } from "../lib/three/addons/postprocessing/RenderPass.js";
+import { UnrealBloomPass } from "../lib/three/addons/postprocessing/UnrealBloomPass.js";
+import { OutputPass } from "../lib/three/addons/postprocessing/OutputPass.js";
 
 let current = null;
 let instanceId = 0;
@@ -37,7 +42,11 @@ const DEFAULT_CONFIG = {
   cameraZ: 2.1,
   cameraY: 1.0,
   accentColor: 0xD55F10,
-  accentIntensity: 10
+  accentIntensity: 10,
+  bloomStrength: 0.85,
+  bloomRadius: 0.4,
+  bloomThreshold: 0.15,
+  groundShadowOpacity: 0.35
 };
 
 export function initThree(canvas, options = {}, dotNetRef = null) {
@@ -71,6 +80,7 @@ export function initThree(canvas, options = {}, dotNetRef = null) {
   renderer.toneMappingExposure = 1.1;
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
   const scene = new THREE.Scene();
   scene.fog = new THREE.Fog(config.backgroundColor, config.fogNear, config.fogFar);
@@ -134,14 +144,27 @@ export function initThree(canvas, options = {}, dotNetRef = null) {
   accent.position.set(0, 1.3, 2.5);
   scene.add(accent);
 
-  // Suelo
-  const groundGeo = new THREE.PlaneGeometry(20, 20);
-  const groundMat = new THREE.MeshStandardMaterial({ color: 0xa0adaf, roughness: 0.9 });
-  const ground = new THREE.Mesh(groundGeo, groundMat);
-  ground.rotation.x = -Math.PI / 2;
-  ground.position.y = 0;
-  ground.receiveShadow = true;
-  scene.add(ground);
+  // Suelo reflectante (espejo) + capturador de sombras superpuesto (las sombras no se
+  // pueden renderizar directamente sobre un Reflector, así que usamos dos planos)
+  const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+  const reflectorGround = new Reflector(new THREE.PlaneGeometry(20, 20), {
+    color: 0x889199,
+    textureWidth: width * pixelRatio,
+    textureHeight: height * pixelRatio,
+    clipBias: 0.003
+  });
+  reflectorGround.rotation.x = -Math.PI / 2;
+  reflectorGround.position.y = 0;
+  scene.add(reflectorGround);
+
+  const shadowCatcher = new THREE.Mesh(
+    new THREE.PlaneGeometry(20, 20),
+    new THREE.ShadowMaterial({ opacity: config.groundShadowOpacity })
+  );
+  shadowCatcher.rotation.x = -Math.PI / 2;
+  shadowCatcher.position.y = 0.001;
+  shadowCatcher.receiveShadow = true;
+  scene.add(shadowCatcher);
 
   const sourceText = config.text;
   const { textOnly, emojis } = splitTextAndEmoji(sourceText);
@@ -221,12 +244,26 @@ export function initThree(canvas, options = {}, dotNetRef = null) {
   };
   controls.addEventListener("change", onControlsChange);
 
+  // Post-procesado: bloom sobre el texto/luz emisivos
+  const composer = new EffectComposer(renderer);
+  composer.addPass(new RenderPass(scene, camera));
+  const bloomPass = new UnrealBloomPass(
+    new THREE.Vector2(width, height),
+    config.bloomStrength,
+    config.bloomRadius,
+    config.bloomThreshold
+  );
+  composer.addPass(bloomPass);
+  composer.addPass(new OutputPass());
+
   const onResize = () => {
     const { width: newWidth, height: newHeight } = getCanvasSize(canvas);
     camera.aspect = newWidth / newHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(newWidth, newHeight, false);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    composer.setSize(newWidth, newHeight);
+    bloomPass.resolution.set(newWidth, newHeight);
   };
   window.addEventListener("resize", onResize);
 
@@ -238,7 +275,7 @@ export function initThree(canvas, options = {}, dotNetRef = null) {
       return;
     }
     controls.update();
-    renderer.render(scene, camera);
+    composer.render();
     animationId = requestAnimationFrame(animate);
   }
 
@@ -255,6 +292,10 @@ export function initThree(canvas, options = {}, dotNetRef = null) {
     accent,
     sky,
     skyMat,
+    composer,
+    bloomPass,
+    reflectorGround,
+    shadowCatcher,
     textMesh: null,
     dotNetRef,
     onControlsChange
@@ -297,6 +338,18 @@ export function updateConfig(options = {}) {
     if (options.cameraY != null) { current.camera.position.y = options.cameraY; changed = true; }
     if (changed) current.controls.update();
   }
+
+  // Actualizar bloom
+  if (current.bloomPass) {
+    if (options.bloomStrength != null) current.bloomPass.strength = options.bloomStrength;
+    if (options.bloomRadius != null) current.bloomPass.radius = options.bloomRadius;
+    if (options.bloomThreshold != null) current.bloomPass.threshold = options.bloomThreshold;
+  }
+
+  // Actualizar opacidad de sombras del suelo
+  if (current.shadowCatcher && options.groundShadowOpacity != null) {
+    current.shadowCatcher.material.opacity = options.groundShadowOpacity;
+  }
 }
 
 export function disposeThree() {
@@ -319,6 +372,16 @@ export function disposeThree() {
       current.controls.removeEventListener("change", current.onControlsChange);
     }
     current.controls.dispose();
+  }
+
+  // El Reflector guarda su propio render target fuera del ciclo genérico de la escena
+  if (current.reflectorGround) {
+    current.reflectorGround.dispose();
+  }
+
+  // Liberar los render targets internos del composer de post-procesado
+  if (current.composer) {
+    current.composer.dispose();
   }
 
   // Limpiar todos los objetos de la escena
