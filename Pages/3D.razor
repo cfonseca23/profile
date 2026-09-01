@@ -226,10 +226,10 @@
         public string Text { get; set; } = "CV 3D";
         public double TextSize { get; set; } = 0.5;
         public double TextDepth { get; set; } = 0.1;
-        public int TextColor { get; set; } = 0x111111;
-        public int EmissiveColor { get; set; } = 0x00ffff;
-        public double EmissiveIntensity { get; set; } = 0.2;
-        public int BackgroundColor { get; set; } = 0x9021C0;
+        public int TextColor { get; set; } = 0xD4AF37;
+        public int EmissiveColor { get; set; } = 0xFFD86B;
+        public double EmissiveIntensity { get; set; } = 0.8;
+        public int BackgroundColor { get; set; } = 0x0B2D5C;
         public int AccentColor { get; set; } = 0xD55F10;
         public double AccentIntensity { get; set; } = 10;
         public double CameraZ { get; set; } = 2.1;
@@ -286,6 +286,9 @@
             emissiveColor = cfg.EmissiveColor,
             emissiveIntensity = cfg.EmissiveIntensity,
             backgroundColor = cfg.BackgroundColor,
+            skyTopColor = 0x1C7CFF,
+            floorColor = 0x0E5A36,
+            reflectionColor = 0xD4AF37,
             accentColor = cfg.AccentColor,
             accentIntensity = cfg.AccentIntensity,
             cameraZ = cfg.CameraZ,

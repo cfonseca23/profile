@@ -37,6 +37,9 @@ const DEFAULT_CONFIG = {
   emissiveColor: 0x00ffff,
   emissiveIntensity: 0.2,
   backgroundColor: 0x9021C0,
+  skyTopColor: 0x0077ff,
+  floorColor: 0xA0ADAF,
+  reflectionColor: 0x889199,
   fogNear: 15,
   fogFar: 35,
   cameraZ: 2.1,
@@ -70,7 +73,10 @@ export function initThree(canvas, options = {}, dotNetRef = null) {
     textColor: toColor(options.textColor, DEFAULT_CONFIG.textColor),
     emissiveColor: toColor(options.emissiveColor, DEFAULT_CONFIG.emissiveColor),
     backgroundColor: toColor(options.backgroundColor, DEFAULT_CONFIG.backgroundColor),
-    accentColor: toColor(options.accentColor, DEFAULT_CONFIG.accentColor)
+    accentColor: toColor(options.accentColor, DEFAULT_CONFIG.accentColor),
+    skyTopColor: toColor(options.skyTopColor, DEFAULT_CONFIG.skyTopColor),
+    floorColor: toColor(options.floorColor, DEFAULT_CONFIG.floorColor),
+    reflectionColor: toColor(options.reflectionColor, DEFAULT_CONFIG.reflectionColor)
   };
 
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
@@ -91,7 +97,7 @@ export function initThree(canvas, options = {}, dotNetRef = null) {
   const skyGeo = new THREE.SphereGeometry(80, 32, 15);
   const skyMat = new THREE.ShaderMaterial({
     uniforms: {
-      topColor:    { value: new THREE.Color(0x0077ff) },
+      topColor:    { value: new THREE.Color(config.skyTopColor) },
       bottomColor: { value: new THREE.Color(config.backgroundColor) },
       offset:      { value: 5 },
       exponent:    { value: 0.6 }
@@ -147,8 +153,17 @@ export function initThree(canvas, options = {}, dotNetRef = null) {
   // Suelo reflectante (espejo) + capturador de sombras superpuesto (las sombras no se
   // pueden renderizar directamente sobre un Reflector, así que usamos dos planos)
   const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+  const groundBase = new THREE.Mesh(
+    new THREE.PlaneGeometry(20, 20),
+    new THREE.MeshStandardMaterial({ color: config.floorColor, roughness: 0.82, metalness: 0.12 })
+  );
+  groundBase.rotation.x = -Math.PI / 2;
+  groundBase.position.y = -0.003;
+  groundBase.receiveShadow = true;
+  scene.add(groundBase);
+
   const reflectorGround = new Reflector(new THREE.PlaneGeometry(20, 20), {
-    color: 0x889199,
+    color: config.reflectionColor,
     textureWidth: width * pixelRatio,
     textureHeight: height * pixelRatio,
     clipBias: 0.003
